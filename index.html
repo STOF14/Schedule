@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Live weekly timetable and semester calendar for COS 284 & COS 330, University of Pretoria, S2 2026.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23261d11'/%3E%3Ctext x='50' y='70' font-size='58' font-family='Arial,sans-serif' font-weight='900' fill='%23f2b705' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <title>S2 2026 — Schedule</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
@@ -15,9 +17,17 @@
   --blue:#0477bf;
   --green:#7ea86b;
   --line: rgba(38,29,17,0.16);
+  --panel-bg:#fff8ea;
+}
+:root[data-theme="dark"]{
+  --cream:#1b1712;
+  --ink:#f2e2c4;
+  --line: rgba(242,226,196,0.14);
+  --panel-bg:#241f18;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:#3f382e;font-family:'Space Grotesk',sans-serif;color:var(--ink);}
+:root[data-theme="dark"] body{background:#0d0b09;}
 
 /* ---------- shell ---------- */
 .shell{
@@ -56,6 +66,22 @@ header{
 .wordmark .a{color:var(--yellow); -webkit-text-stroke:1.4px var(--ink);}
 .wordmark .b{color:var(--blue); -webkit-text-stroke:1.4px var(--ink);}
 .subhead{margin-top:8px; font-weight:600; font-size:13.5px;}
+
+.theme-toggle{
+  position:absolute; top:30px; right:36px; z-index:3;
+  width:34px; height:34px; border-radius:50%; border:2px solid var(--ink);
+  background:var(--cream); cursor:pointer; font-size:15px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.next-banner{
+  margin-top:18px; display:inline-flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  background:var(--ink); color:var(--cream); padding:7px 14px; border-radius:14px;
+  max-width:100%;
+}
+.next-banner strong{color:var(--yellow);}
+.banner-cd{background:var(--red); color:var(--cream); padding:1px 8px; border-radius:10px; margin-left:4px;}
 
 /* ---------- tabs ---------- */
 .tabs{
@@ -104,6 +130,9 @@ header{
 .seg button:last-child{border-right:none;}
 .seg button.active{background:var(--ink); color:var(--cream);}
 
+/* ---------- day switcher (mobile only) ---------- */
+.day-switcher{display:none;}
+
 /* ---------- views ---------- */
 .view{display:none; position:relative; z-index:2; padding:14px 40px 40px 40px;}
 .view.active{display:block; animation:fadein 0.35s ease;}
@@ -122,7 +151,7 @@ header{
 .tt-time-col{display:flex; flex-direction:column;}
 .tt-time{
   font-family:'JetBrains Mono',monospace; font-size:9px; opacity:0.6; text-align:right;
-  padding-right:6px; height:24px; border-top:1px solid var(--line);
+  padding-right:6px; height:60px; border-top:1px solid var(--line);
 }
 .day-col{position:relative; border-left:1px solid var(--line);}
 .day-col.today{background:rgba(214,58,48,0.06);}
@@ -130,13 +159,13 @@ header{
 
 .block{
   position:absolute; left:3px; right:3px; border-radius:4px; border:2px solid var(--ink);
-  padding:5px 6px; font-size:10px; line-height:1.25; overflow:hidden; cursor:default;
+  padding:6px 7px; font-size:11px; line-height:1.3; overflow:hidden; cursor:default;
   transition:opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .block:hover{transform:translateY(-1px) scale(1.015); box-shadow:3px 4px 0 var(--ink); z-index:5;}
-.block .mod{font-family:'Archivo Black',sans-serif; font-size:11.5px; display:block;}
-.block .kind{font-family:'JetBrains Mono',monospace; font-size:8.3px; text-transform:uppercase; opacity:0.9; display:block; margin-top:1px;}
-.block .venue{font-size:9px; margin-top:2px; display:block; font-weight:600;}
+.block .mod{font-family:'Archivo Black',sans-serif; font-size:13px; display:block;}
+.block .kind{font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase; opacity:0.9; display:block; margin-top:2px;}
+.block .venue{font-size:10.5px; margin-top:3px; display:block; font-weight:600;}
 .b284{background:var(--blue); color:var(--cream);}
 .b330{background:var(--red); color:var(--cream);}
 .btest{background:var(--yellow); color:var(--ink);}
@@ -187,7 +216,7 @@ header{
 .legend2{display:flex; flex-wrap:wrap; gap:14px; margin-top:44px; font-family:'JetBrains Mono',monospace; font-size:9.5px; align-items:center;}
 
 .detail-panel{
-  margin-top:20px; border:2px solid var(--ink); border-radius:4px; background:#fff8ea;
+  margin-top:20px; border:2px solid var(--ink); border-radius:4px; background:var(--panel-bg);
   padding:16px 18px; display:none;
 }
 .detail-panel.show{display:block; animation:fadein 0.25s ease;}
@@ -225,6 +254,23 @@ footer{
   .wordmark{font-size:38px;}
   .tt-head-row div, .tt-time{font-size:8px;}
   .month-labels div{font-size:8px;}
+  .theme-toggle{top:20px; right:16px;}
+
+  .day-switcher{
+    display:flex; gap:6px; padding:10px 18px 0 18px;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+  }
+  .day-switcher button{
+    flex:1; border:2px solid var(--ink); background:var(--cream); color:var(--ink);
+    padding:6px 0; font-weight:700; cursor:pointer; border-radius:4px;
+  }
+  .day-switcher button.active{background:var(--ink); color:var(--cream);}
+
+  .tt-head-row.mobile-mode, .tt-body.mobile-mode{grid-template-columns:44px 1fr;}
+  .tt-body.mobile-mode .day-col{display:none;}
+  .tt-body.mobile-mode .day-col.mobile-show{display:block;}
+  .tt-head-row.mobile-mode div[data-day]{display:none;}
+  .tt-head-row.mobile-mode div[data-day].mobile-show{display:block;}
 }
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important;}
@@ -239,9 +285,12 @@ footer{
   <div class="deco-circle" style="width:90px;height:90px;background:var(--yellow);bottom:-30px;left:-30px;opacity:0.85;"></div>
 
   <header>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark / light theme">&#9789;</button>
     <div class="eyebrow">University of Pretoria · Hatfield · S2 2026</div>
     <div class="wordmark"><span class="a">SCHED</span><span class="b">ULE</span></div>
     <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 — live timetable &amp; semester calendar</div>
+
+    <div><span class="next-banner" id="nextBanner">Loading next class…</span></div>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="tt">Timetable</button>
@@ -272,6 +321,14 @@ footer{
         <button data-val="P02">P02</button>
       </div>
     </div>
+  </div>
+
+  <div class="day-switcher" id="daySwitcher">
+    <button data-day="1">Mon</button>
+    <button data-day="2">Tue</button>
+    <button data-day="3">Wed</button>
+    <button data-day="4">Thu</button>
+    <button data-day="5">Fri</button>
   </div>
 
   <div class="view active" id="view-tt">
@@ -338,57 +395,9 @@ footer{
   </footer>
 </div>
 
+<script src="data.js"></script>
 <script>
-/* ---------------- DATA ---------------- */
-const blocks = [
-  {day:1, mod:'284', group:'', kind:'Lecture 2', venue:'IT 2-23', start:'09:30', end:'10:20'}, // placeholder removed below
-];
-
-// Real block data: {day(1=Mon..5=Fri), mod, group('' if not group-specific), kind, venue, start, end}
-const TT = [
-  {day:1, mod:'330', group:'', kind:'Lecture · G01', venue:'IT 2-27', start:'08:30', end:'09:20'},
-  {day:1, mod:'284', group:'P01', kind:'Practical · Groups A–D', venue:'Info Brown / Grey / Maroon / Purple', start:'14:30', end:'17:20'},
-
-  {day:2, mod:'284', group:'', kind:'Theory Lecture 1', venue:'Centenary 1', start:'10:30', end:'11:20'},
-  {day:2, mod:'284', group:'P02', kind:'Practical · Groups A–B', venue:'Info Blue Lab 2 / 3', start:'14:30', end:'17:20'},
-
-  {day:3, mod:'330', group:'P01', kind:'Practical', venue:'Info SIT 1 Lab', start:'07:30', end:'10:20'},
-  {day:3, mod:'284', group:'', kind:'Theory Lecture 2', venue:'IT 2-23', start:'09:30', end:'10:20'},
-  {day:3, mod:'330', group:'P02', kind:'Practical', venue:'Info Blue Lab 1 / 2', start:'13:30', end:'16:20'},
-
-  {day:4, mod:'284', group:'', kind:'Assembly Lecture', venue:'IT 2-23', start:'07:30', end:'08:20'},
-  {day:4, mod:'330', group:'', kind:'Lecture · G01', venue:'IT 4-4', start:'11:30', end:'12:20'},
-
-  {day:5, mod:'test', group:'', kind:'Class Test Window (when scheduled)', venue:'ClickUP / Online', start:'09:30', end:'12:30'},
-];
-
-const EVENTS = [
-  {date:'2026-08-07', mod:'284', label:'Class Test 1 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
-  {date:'2026-08-22', mod:'284', label:'Semester Test 1', time:'10:00–11:30', venue:'Informatorium Labs'},
-  {date:'2026-08-28', mod:'330', label:'Semester Test 1', time:'10:00–11:30', venue:'Informatorium Labs'},
-  {date:'2026-09-11', mod:'284', label:'Class Test 2 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
-  {date:'2026-10-12', mod:'284', label:'Semester Test 2', time:'10:00–11:30', venue:'Informatorium Labs'},
-  {date:'2026-10-30', mod:'284', label:'Class Test 3 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
-  {date:'2026-11-11', mod:'284', label:'Final Exam — Paper 1', time:'07:30', venue:'Hatfield'},
-  {date:'2026-11-21', mod:'330', label:'Final Exam — Paper 1', time:'15:00', venue:'Hatfield'},
-];
-
-const SEGMENTS = [
-  {start:'2026-07-20', end:'2026-08-21', type:'lectures'},
-  {start:'2026-08-22', end:'2026-09-05', type:'test'},
-  {start:'2026-09-06', end:'2026-09-16', type:'lectures'},
-  {start:'2026-09-17', end:'2026-09-27', type:'recess'},
-  {start:'2026-09-28', end:'2026-10-09', type:'lectures'},
-  {start:'2026-10-10', end:'2026-10-24', type:'test'},
-  {start:'2026-10-25', end:'2026-11-05', type:'lectures'},
-  {start:'2026-11-06', end:'2026-11-06', type:'study'},
-  {start:'2026-11-07', end:'2026-11-25', type:'exam'},
-  {start:'2026-11-26', end:'2026-11-29', type:'lectures'},
-  {start:'2026-11-30', end:'2026-12-05', type:'supp'},
-];
-
-const SEM_START = new Date('2026-07-20T00:00:00');
-const SEM_END   = new Date('2026-12-05T23:59:59');
+/* ---------------- DERIVED CONSTANTS ---------------- */
 const totalMs = SEM_END - SEM_START;
 
 function pct(dateStr){
@@ -409,8 +418,22 @@ function daysLeftLabel(dateStr){
   return Math.abs(diff) + ' days ago';
 }
 
+/* ---------------- THEME TOGGLE ---------------- */
+const themeToggle = document.getElementById('themeToggle');
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  themeToggle.innerHTML = t === 'dark' ? '&#9728;' : '&#9789;';
+}
+applyTheme(localStorage.getItem('sched_theme') || 'light');
+themeToggle.addEventListener('click', ()=>{
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('sched_theme', next);
+});
+
 /* ---------------- TIMETABLE RENDER ---------------- */
 const HOURS = ['07:30','08:30','09:30','10:30','11:30','12:30','13:30','14:30','15:30','16:30','17:30'];
+const HOUR_PX = 60; // px per hour — matches .tt-time { height:60px } in CSS
 const timeCol = document.getElementById('timeCol');
 HOURS.forEach(h=>{
   const d = document.createElement('div');
@@ -419,20 +442,20 @@ HOURS.forEach(h=>{
 });
 
 function toMinutes(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
-const dayHeight = 24 * 10; // 10 hour blocks * 24px
+const dayHeight = HOUR_PX * 10; // 10 hour blocks
 
 for(let day=1; day<=5; day++){
   const col = document.getElementById('col-'+day);
   // hour guides
   for(let i=1;i<=10;i++){
     const g = document.createElement('div');
-    g.className='hr-guide'; g.style.top = (i*24)+'px';
+    g.className='hr-guide'; g.style.top = (i*HOUR_PX)+'px';
     col.appendChild(g);
   }
   col.style.height = dayHeight+'px';
   TT.filter(b=>b.day===day).forEach(b=>{
-    const top = (toMinutes(b.start)-450)/60*24;
-    const height = (toMinutes(b.end)-toMinutes(b.start))/60*24;
+    const top = (toMinutes(b.start)-450)/60*HOUR_PX;
+    const height = (toMinutes(b.end)-toMinutes(b.start))/60*HOUR_PX;
     const el = document.createElement('div');
     const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
     el.className = 'block '+cls;
@@ -446,7 +469,8 @@ for(let day=1; day<=5; day++){
   });
 }
 
-/* now-line */
+/* now-line (also auto-scrolls the page to "now" once on first load) */
+let didAutoScroll = false;
 function renderNowLine(){
   document.querySelectorAll('.nowline').forEach(n=>n.remove());
   document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('today'));
@@ -462,21 +486,98 @@ function renderNowLine(){
 
     const mins = now.getHours()*60+now.getMinutes();
     if(mins>=450 && mins<=1050){
-      const top = (mins-450)/60*24;
+      const top = (mins-450)/60*HOUR_PX;
       const line = document.createElement('div');
       line.className='nowline';
       line.style.top = top+'px';
       line.innerHTML = `<span class="tag">${now.toTimeString().slice(0,5)}</span>`;
       col.appendChild(line);
+
+      if(!didAutoScroll){
+        didAutoScroll = true;
+        setTimeout(()=> line.scrollIntoView({block:'center', behavior:'smooth'}), 150);
+      }
     }
   }
 }
 renderNowLine();
 setInterval(renderNowLine, 60000);
 
-/* filters */
-let modActive = {284:true, 330:true};
-let groupSel = {284:'all', 330:'all'};
+/* ---------------- NEXT CLASS / ASSESSMENT BANNER ---------------- */
+function fmtCountdown(ms){
+  if(ms<0) ms=0;
+  const totalMin = Math.round(ms/60000);
+  const days = Math.floor(totalMin/1440);
+  const hrs = Math.floor((totalMin%1440)/60);
+  const mins = totalMin%60;
+  if(days>0) return days+'d '+hrs+'h';
+  if(hrs>0) return hrs+'h '+mins+'m';
+  return mins+'m';
+}
+
+function getNextUp(){
+  const now = new Date();
+  const candidates = [];
+
+  TT.forEach(b=>{
+    if(b.mod==='test') return; // generic placeholder window, not a real weekly event
+    if(!modActive[b.mod]) return;
+    if(b.group && groupSel[b.mod]!=='all' && groupSel[b.mod]!==b.group) return;
+
+    const nowDay = now.getDay();
+    let diffDays = (b.day - nowDay + 7) % 7;
+    const [sh,sm] = b.start.split(':').map(Number);
+    const dt = new Date(now);
+    dt.setHours(sh, sm, 0, 0);
+    dt.setDate(dt.getDate() + diffDays);
+    if(dt <= now) dt.setDate(dt.getDate()+7);
+
+    candidates.push({
+      when: dt,
+      label: (b.mod==='284' ? 'COS 284' : 'COS 330') + ' ' + b.kind,
+      venue: b.venue,
+      kindLabel: '▸ Next class'
+    });
+  });
+
+  EVENTS.forEach(ev=>{
+    const m = (ev.time || '').match(/\d{2}:\d{2}/);
+    const hhmm = m ? m[0] : '00:00';
+    const dt = new Date(ev.date+'T'+hhmm+':00');
+    if(dt > now){
+      candidates.push({
+        when: dt,
+        label: (ev.mod==='284' ? 'COS 284' : 'COS 330') + ' — ' + ev.label,
+        venue: ev.venue,
+        kindLabel: '📌 Next assessment'
+      });
+    }
+  });
+
+  candidates.sort((a,b)=>a.when-b.when);
+  return candidates[0] || null;
+}
+
+function renderNextBanner(){
+  const el = document.getElementById('nextBanner');
+  if(!el) return;
+  const next = getNextUp();
+  if(!next){
+    el.innerHTML = 'No upcoming classes match the current filters.';
+    return;
+  }
+  const diff = next.when - new Date();
+  el.innerHTML = `${next.kindLabel}: <strong>${next.label}</strong> — ${next.venue}<span class="banner-cd">in ${fmtCountdown(diff)}</span>`;
+}
+
+/* ---------------- FILTERS (persisted across visits) ---------------- */
+let modActive = JSON.parse(localStorage.getItem('sched_modActive') || 'null') || {284:true, 330:true};
+let groupSel  = JSON.parse(localStorage.getItem('sched_groupSel')  || 'null') || {284:'all', 330:'all'};
+
+function saveFilterState(){
+  localStorage.setItem('sched_modActive', JSON.stringify(modActive));
+  localStorage.setItem('sched_groupSel', JSON.stringify(groupSel));
+}
 
 function applyFilters(){
   document.querySelectorAll('.block').forEach(el=>{
@@ -489,13 +590,27 @@ function applyFilters(){
     }
     el.classList.toggle('dim', !show);
   });
+  renderNextBanner();
 }
+
+// restore saved chip / segmented-button state into the UI before first render
+document.querySelectorAll('.chip[data-mod]').forEach(chip=>{
+  const m = chip.dataset.mod;
+  chip.classList.toggle('on', !!modActive[m]);
+});
+document.querySelectorAll('.seg').forEach(seg=>{
+  const mod = seg.dataset.segfor;
+  seg.querySelectorAll('button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.val === groupSel[mod]);
+  });
+});
 
 document.querySelectorAll('.chip[data-mod]').forEach(chip=>{
   chip.addEventListener('click', ()=>{
     const m = chip.dataset.mod;
     modActive[m] = !modActive[m];
     chip.classList.toggle('on', modActive[m]);
+    saveFilterState();
     applyFilters();
   });
 });
@@ -507,10 +622,42 @@ document.querySelectorAll('.seg').forEach(seg=>{
       seg.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       groupSel[mod] = btn.dataset.val;
+      saveFilterState();
       applyFilters();
     });
   });
 });
+
+applyFilters();
+setInterval(renderNextBanner, 60000);
+
+/* ---------------- MOBILE SINGLE-DAY VIEW ---------------- */
+const daySwitcher = document.getElementById('daySwitcher');
+const ttBodyEl = document.getElementById('ttBody');
+const ttHeadRowEl = document.getElementById('ttHeadRow');
+
+function setMobileDay(day){
+  daySwitcher.querySelectorAll('button').forEach(b=>b.classList.toggle('active', +b.dataset.day===day));
+  document.querySelectorAll('.day-col').forEach(c=>c.classList.toggle('mobile-show', +c.dataset.day===day));
+  document.querySelectorAll('.tt-head-row div[data-day]').forEach(c=>c.classList.toggle('mobile-show', +c.dataset.day===day));
+}
+
+function applyMobileMode(){
+  const isMobile = window.matchMedia('(max-width:720px)').matches;
+  ttBodyEl.classList.toggle('mobile-mode', isMobile);
+  ttHeadRowEl.classList.toggle('mobile-mode', isMobile);
+}
+applyMobileMode();
+window.addEventListener('resize', applyMobileMode);
+
+daySwitcher.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click', ()=> setMobileDay(+btn.dataset.day));
+});
+
+(function initMobileDay(){
+  const todayDay = new Date().getDay();
+  setMobileDay(todayDay>=1 && todayDay<=5 ? todayDay : 1);
+})();
 
 /* ---------------- CALENDAR RENDER ---------------- */
 const timeline = document.getElementById('timeline');
@@ -527,13 +674,13 @@ SEGMENTS.forEach(s=>{
 });
 
 // now marker on timeline
-const now = new Date();
-if(now >= SEM_START && now <= SEM_END){
-  const nowPct = ((now-SEM_START)/totalMs)*100;
+const nowForTimeline = new Date();
+if(nowForTimeline >= SEM_START && nowForTimeline <= SEM_END){
+  const nowPct = ((nowForTimeline-SEM_START)/totalMs)*100;
   const nm = document.createElement('div');
   nm.className='now-marker';
   nm.style.left = nowPct+'%';
-  nm.innerHTML = `<span class="tag">TODAY · ${now.toLocaleDateString('en-ZA',{day:'numeric',month:'short'})}</span>`;
+  nm.innerHTML = `<span class="tag">TODAY · ${nowForTimeline.toLocaleDateString('en-ZA',{day:'numeric',month:'short'})}</span>`;
   timeline.appendChild(nm);
 }
 
@@ -557,6 +704,7 @@ function selectEvent(ev, pinEl, rowEl){
   detailPanel.classList.add('show');
 }
 
+const eventRefs = [];
 EVENTS.forEach((ev, i)=>{
   const left = pct(ev.date);
 
@@ -577,7 +725,17 @@ EVENTS.forEach((ev, i)=>{
 
   pin.addEventListener('click', ()=>selectEvent(ev, pin, row));
   row.addEventListener('click', ()=>selectEvent(ev, pin, row));
+
+  eventRefs.push({ev, pin, row});
 });
+
+// auto-select the next upcoming assessment so the detail panel isn't empty on load
+(function autoSelectNextEvent(){
+  const now = new Date();
+  let next = eventRefs.find(r => new Date(r.ev.date+'T23:59:59') >= now);
+  if(!next && eventRefs.length) next = eventRefs[eventRefs.length-1];
+  if(next) selectEvent(next.ev, next.pin, next.row);
+})();
 
 /* ---------------- TABS ---------------- */
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -589,7 +747,9 @@ tabBtns.forEach(btn=>{
     btn.classList.add('active');
     Object.values(views).forEach(v=>v.classList.remove('active'));
     views[btn.dataset.tab].classList.add('active');
-    ttFilterbar.style.display = btn.dataset.tab==='tt' ? 'flex' : 'none';
+    const showTTChrome = btn.dataset.tab==='tt';
+    ttFilterbar.style.display = showTTChrome ? 'flex' : 'none';
+    daySwitcher.style.display = showTTChrome ? '' : 'none';
   });
 });
 </script>
