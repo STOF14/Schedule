@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S2 2026 — Schedule</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --cream:#f2e2c4;
+  --ink:#261d11;
+  --red:#d63a30;
+  --yellow:#f2b705;
+  --blue:#0477bf;
+  --green:#7ea86b;
+  --line: rgba(38,29,17,0.16);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:#3f382e;font-family:'Space Grotesk',sans-serif;color:var(--ink);}
+
+/* ---------- shell ---------- */
+.shell{
+  max-width:1040px;
+  margin:24px auto 60px auto;
+  background:var(--cream);
+  border-radius:4px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.gridlines{
+  position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 20%),
+    repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 8%);
+  pointer-events:none;
+  opacity:0.6;
+}
+.deco-circle{position:absolute;border-radius:50%;z-index:0;}
+.deco-tri{position:absolute;width:0;height:0;z-index:0;}
+
+/* ---------- header ---------- */
+header{
+  position:relative; z-index:2;
+  padding:34px 40px 20px 40px;
+}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--red); font-weight:700;
+}
+.wordmark{
+  font-family:'Archivo Black',sans-serif; font-size:56px; line-height:0.9;
+  margin-top:6px; letter-spacing:-0.01em;
+}
+.wordmark .a{color:var(--yellow); -webkit-text-stroke:1.4px var(--ink);}
+.wordmark .b{color:var(--blue); -webkit-text-stroke:1.4px var(--ink);}
+.subhead{margin-top:8px; font-weight:600; font-size:13.5px;}
+
+/* ---------- tabs ---------- */
+.tabs{
+  display:flex; gap:0; margin-top:26px; border-bottom:2px solid var(--ink);
+}
+.tab-btn{
+  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.08em;
+  background:none; border:none; cursor:pointer; color:var(--ink);
+  padding:10px 18px; position:relative; opacity:0.5;
+  transition:opacity 0.2s ease;
+}
+.tab-btn:hover{opacity:0.85;}
+.tab-btn.active{opacity:1;}
+.tab-btn.active::after{
+  content:''; position:absolute; left:0; right:0; bottom:-2px; height:3px;
+  background:var(--red);
+}
+.tab-btn:nth-child(2).active::after{background:var(--blue);}
+
+/* ---------- filter bar ---------- */
+.filterbar{
+  position:relative; z-index:2;
+  display:flex; flex-wrap:wrap; gap:22px; align-items:center;
+  padding:18px 40px 4px 40px;
+  font-family:'JetBrains Mono',monospace; font-size:10.5px;
+}
+.filter-group{display:flex; align-items:center; gap:8px;}
+.filter-group .lbl{text-transform:uppercase; letter-spacing:0.06em; opacity:0.6; font-weight:700;}
+.chip{
+  border:2px solid var(--ink); background:var(--cream); border-radius:14px;
+  padding:4px 12px; cursor:pointer; font-weight:700; font-size:10.5px;
+  transition:all 0.15s ease; user-select:none;
+}
+.chip.on.c284{background:var(--blue); color:var(--cream);}
+.chip.on.c330{background:var(--red); color:var(--cream);}
+.chip:not(.on){opacity:0.4;}
+.seg{
+  display:flex; border:2px solid var(--ink); border-radius:14px; overflow:hidden;
+}
+.seg button{
+  border:none; background:var(--cream); font-family:'JetBrains Mono',monospace;
+  font-size:10px; font-weight:700; padding:4px 10px; cursor:pointer; color:var(--ink);
+  border-right:1px solid var(--ink);
+}
+.seg button:last-child{border-right:none;}
+.seg button.active{background:var(--ink); color:var(--cream);}
+
+/* ---------- views ---------- */
+.view{display:none; position:relative; z-index:2; padding:14px 40px 40px 40px;}
+.view.active{display:block; animation:fadein 0.35s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ---------- timetable ---------- */
+.tt-wrap{border:2px solid var(--ink); background:var(--cream); border-radius:3px; overflow:hidden; margin-top:6px;}
+.tt-head-row{display:grid; grid-template-columns:58px repeat(5,1fr); background:var(--ink);}
+.tt-head-row div{
+  color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.05em; padding:8px 4px; text-align:center;
+  border-left:1px solid rgba(242,226,196,0.25);
+}
+.tt-head-row div.today-col{background:var(--red);}
+.tt-body{display:grid; grid-template-columns:58px repeat(5,1fr); position:relative;}
+.tt-time-col{display:flex; flex-direction:column;}
+.tt-time{
+  font-family:'JetBrains Mono',monospace; font-size:9px; opacity:0.6; text-align:right;
+  padding-right:6px; height:24px; border-top:1px solid var(--line);
+}
+.day-col{position:relative; border-left:1px solid var(--line);}
+.day-col.today{background:rgba(214,58,48,0.06);}
+.hr-guide{position:absolute; left:0; right:0; border-top:1px solid var(--line); pointer-events:none;}
+
+.block{
+  position:absolute; left:3px; right:3px; border-radius:4px; border:2px solid var(--ink);
+  padding:5px 6px; font-size:10px; line-height:1.25; overflow:hidden; cursor:default;
+  transition:opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.block:hover{transform:translateY(-1px) scale(1.015); box-shadow:3px 4px 0 var(--ink); z-index:5;}
+.block .mod{font-family:'Archivo Black',sans-serif; font-size:11.5px; display:block;}
+.block .kind{font-family:'JetBrains Mono',monospace; font-size:8.3px; text-transform:uppercase; opacity:0.9; display:block; margin-top:1px;}
+.block .venue{font-size:9px; margin-top:2px; display:block; font-weight:600;}
+.b284{background:var(--blue); color:var(--cream);}
+.b330{background:var(--red); color:var(--cream);}
+.btest{background:var(--yellow); color:var(--ink);}
+.block.dim{opacity:0.12; pointer-events:none;}
+
+.nowline{
+  position:absolute; left:0; right:0; height:0; border-top:2px solid var(--red); z-index:6;
+  pointer-events:none;
+}
+.nowline::before{
+  content:''; position:absolute; left:-5px; top:-5px; width:9px; height:9px; border-radius:50%;
+  background:var(--red); border:2px solid var(--cream);
+}
+.nowline .tag{
+  position:absolute; left:6px; top:-9px; background:var(--red); color:var(--cream);
+  font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:1px 5px; border-radius:2px;
+}
+
+.legend-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:10px; align-items:center;}
+.swatch{width:13px; height:13px; border:2px solid var(--ink); display:inline-block; margin-right:6px; vertical-align:middle; border-radius:3px;}
+
+.note{margin-top:16px; font-size:10.5px; line-height:1.55; max-width:640px; border-left:3px solid var(--red); padding-left:10px;}
+
+/* ---------- calendar / timeline ---------- */
+.month-labels{display:flex; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:4px;}
+.month-labels div{flex:1; border-left:1px solid var(--ink); padding-left:4px;}
+.month-labels div:first-child{border-left:none;}
+.timeline{position:relative; height:48px; border:2px solid var(--ink); overflow:visible; margin-top:2px;}
+.seg-block{position:absolute; top:0; bottom:0; border-right:1px solid var(--ink); transition:filter 0.15s ease;}
+.seg-block:hover{filter:brightness(1.08);}
+.seg-block.lectures{background:var(--cream);}
+.seg-block.test{background:var(--green);}
+.seg-block.recess{background:var(--yellow);}
+.seg-block.exam{background:var(--blue);}
+.seg-block.study{background:#b9b2a4;}
+.seg-block.supp{background:#6b5b4a;}
+
+.pin{position:absolute; top:-36px; transform:translateX(-50%); text-align:center; z-index:5; cursor:pointer;}
+.pin .dot{width:10px; height:10px; border-radius:50%; background:var(--red); border:2px solid var(--ink); margin:0 auto 3px auto; transition:transform 0.15s ease;}
+.pin:hover .dot{transform:scale(1.35);}
+.pin .lab{font-family:'JetBrains Mono',monospace; font-size:7.3px; white-space:nowrap; background:var(--ink); color:var(--cream); padding:1px 4px; border-radius:2px; opacity:0.9;}
+.pin .stem{width:1px; height:28px; background:var(--ink); margin:2px auto 0 auto;}
+.pin.selected .dot{background:var(--yellow); transform:scale(1.35);}
+
+.now-marker{position:absolute; top:-14px; bottom:-14px; width:0; border-left:2px dashed var(--ink); z-index:4;}
+.now-marker .tag{position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; padding:2px 6px; border-radius:2px; white-space:nowrap;}
+
+.legend2{display:flex; flex-wrap:wrap; gap:14px; margin-top:44px; font-family:'JetBrains Mono',monospace; font-size:9.5px; align-items:center;}
+
+.detail-panel{
+  margin-top:20px; border:2px solid var(--ink); border-radius:4px; background:#fff8ea;
+  padding:16px 18px; display:none;
+}
+.detail-panel.show{display:block; animation:fadein 0.25s ease;}
+.detail-panel .dt{font-family:'Archivo Black',sans-serif; font-size:18px;}
+.detail-panel .dd{font-family:'Space Grotesk',sans-serif; font-size:12px; margin-top:4px;}
+.detail-panel .cd{
+  display:inline-block; margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px;
+  font-weight:700; padding:3px 10px; border-radius:12px; background:var(--ink); color:var(--cream);
+}
+
+.datatable{border-collapse:collapse; width:100%; font-size:11px; margin-top:22px;}
+.datatable th{
+  background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:9.5px;
+  text-transform:uppercase; letter-spacing:0.05em; text-align:left; padding:7px 8px; font-weight:700;
+}
+.datatable td{padding:7px 8px; border-bottom:1px solid var(--line);}
+.datatable tr.ev{cursor:pointer; transition:background 0.15s ease;}
+.datatable tr.ev:hover td{background:rgba(214,58,48,0.08);}
+.datatable tr.ev.selected td{background:rgba(242,183,5,0.35);}
+.tag2{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; padding:1px 6px; border-radius:8px; color:var(--cream);}
+.tag2.c284{background:var(--blue);}
+.tag2.c330{background:var(--red);}
+.days-left{font-family:'JetBrains Mono',monospace; font-size:9.5px; opacity:0.65;}
+
+.quote-block{margin-top:22px; border-left:3px solid var(--ink); padding-left:12px; font-size:11px; line-height:1.5; max-width:560px; font-style:italic;}
+
+footer{
+  position:relative; z-index:2; background:var(--ink); color:var(--cream); padding:12px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.06em;
+}
+
+@media (max-width:720px){
+  header, .filterbar, .view, footer{padding-left:18px; padding-right:18px;}
+  .wordmark{font-size:38px;}
+  .tt-head-row div, .tt-time{font-size:8px;}
+  .month-labels div{font-size:8px;}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="gridlines"></div>
+  <div class="deco-circle" style="width:160px;height:160px;background:var(--red);top:-60px;right:-60px;opacity:0.9;"></div>
+  <div class="deco-circle" style="width:90px;height:90px;background:var(--yellow);bottom:-30px;left:-30px;opacity:0.85;"></div>
+
+  <header>
+    <div class="eyebrow">University of Pretoria · Hatfield · S2 2026</div>
+    <div class="wordmark"><span class="a">SCHED</span><span class="b">ULE</span></div>
+    <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 — live timetable &amp; semester calendar</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tt">Timetable</button>
+      <button class="tab-btn" data-tab="cal">Calendar</button>
+    </div>
+  </header>
+
+  <!-- ============ TIMETABLE VIEW ============ -->
+  <div class="filterbar" id="ttFilterbar">
+    <div class="filter-group">
+      <span class="lbl">Module</span>
+      <span class="chip on c284" data-mod="284">COS 284</span>
+      <span class="chip on c330" data-mod="330">COS 330</span>
+    </div>
+    <div class="filter-group">
+      <span class="lbl">284 Practical</span>
+      <div class="seg" data-segfor="284">
+        <button class="active" data-val="all">All</button>
+        <button data-val="P01">P01</button>
+        <button data-val="P02">P02</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="lbl">330 Practical</span>
+      <div class="seg" data-segfor="330">
+        <button class="active" data-val="all">All</button>
+        <button data-val="P01">P01</button>
+        <button data-val="P02">P02</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="view active" id="view-tt">
+    <div class="tt-wrap">
+      <div class="tt-head-row" id="ttHeadRow">
+        <div>Time</div><div data-day="1">Mon</div><div data-day="2">Tue</div><div data-day="3">Wed</div><div data-day="4">Thu</div><div data-day="5">Fri</div>
+      </div>
+      <div class="tt-body" id="ttBody">
+        <div class="tt-time-col" id="timeCol"></div>
+        <div class="day-col" data-day="1" id="col-1"></div>
+        <div class="day-col" data-day="2" id="col-2"></div>
+        <div class="day-col" data-day="3" id="col-3"></div>
+        <div class="day-col" data-day="4" id="col-4"></div>
+        <div class="day-col" data-day="5" id="col-5"></div>
+      </div>
+    </div>
+
+    <div class="legend-row">
+      <span><span class="swatch" style="background:var(--blue);"></span>COS 284</span>
+      <span><span class="swatch" style="background:var(--red);"></span>COS 330</span>
+      <span><span class="swatch" style="background:var(--yellow);"></span>Test / assessment slot</span>
+    </div>
+    <div class="note" id="ttNote">
+      Use the filters above to isolate your practical group. COS 284's Friday 09:30–12:30 block is the
+      standing class-test window — a test only happens on the three announced dates (7 Aug, 11 Sep, 30 Oct).
+    </div>
+  </div>
+
+  <!-- ============ CALENDAR VIEW ============ -->
+  <div class="view" id="view-cal">
+    <div class="month-labels"><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov / Dec</div></div>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="legend2">
+      <span><span class="swatch" style="background:var(--cream);"></span>Lectures</span>
+      <span><span class="swatch" style="background:var(--green);"></span>Test Week</span>
+      <span><span class="swatch" style="background:var(--yellow);"></span>Recess</span>
+      <span><span class="swatch" style="background:#b9b2a4;"></span>Study period</span>
+      <span><span class="swatch" style="background:var(--blue);"></span>Exam period</span>
+      <span><span class="swatch" style="background:#6b5b4a;"></span>Supplementary exams</span>
+      <span><span class="swatch" style="background:var(--red);border-radius:50%;"></span>Assessment date</span>
+    </div>
+
+    <div class="detail-panel" id="detailPanel">
+      <div class="dt" id="dpTitle"></div>
+      <div class="dd" id="dpDesc"></div>
+      <div class="cd" id="dpCountdown"></div>
+    </div>
+
+    <table class="datatable">
+      <tr><th>Date</th><th>Module</th><th>Assessment</th><th>Time</th><th>Venue</th><th>Countdown</th></tr>
+      <tbody id="eventRows"></tbody>
+    </table>
+
+    <div class="quote-block">
+      "The best two class tests count — no medical certificate is accepted for a missed one. Exam entrance
+      requires a semester mark above 40% and at least 40% on one semester test." — COS 284 Study Guide, S2 2026
+    </div>
+  </div>
+
+  <footer>
+    <span>NAS / EBIT · UNIVERSITY OF PRETORIA</span>
+    <span id="footRight">CONFIRM ALL DATES ON CLICKUP</span>
+  </footer>
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const blocks = [
+  {day:1, mod:'284', group:'', kind:'Lecture 2', venue:'IT 2-23', start:'09:30', end:'10:20'}, // placeholder removed below
+];
+
+// Real block data: {day(1=Mon..5=Fri), mod, group('' if not group-specific), kind, venue, start, end}
+const TT = [
+  {day:1, mod:'330', group:'', kind:'Lecture · G01', venue:'IT 2-27', start:'08:30', end:'09:20'},
+  {day:1, mod:'284', group:'P01', kind:'Practical · Groups A–D', venue:'Info Brown / Grey / Maroon / Purple', start:'14:30', end:'17:20'},
+
+  {day:2, mod:'284', group:'', kind:'Theory Lecture 1', venue:'Centenary 1', start:'10:30', end:'11:20'},
+  {day:2, mod:'284', group:'P02', kind:'Practical · Groups A–B', venue:'Info Blue Lab 2 / 3', start:'14:30', end:'17:20'},
+
+  {day:3, mod:'330', group:'P01', kind:'Practical', venue:'Info SIT 1 Lab', start:'07:30', end:'10:20'},
+  {day:3, mod:'284', group:'', kind:'Theory Lecture 2', venue:'IT 2-23', start:'09:30', end:'10:20'},
+  {day:3, mod:'330', group:'P02', kind:'Practical', venue:'Info Blue Lab 1 / 2', start:'13:30', end:'16:20'},
+
+  {day:4, mod:'284', group:'', kind:'Assembly Lecture', venue:'IT 2-23', start:'07:30', end:'08:20'},
+  {day:4, mod:'330', group:'', kind:'Lecture · G01', venue:'IT 4-4', start:'11:30', end:'12:20'},
+
+  {day:5, mod:'test', group:'', kind:'Class Test Window (when scheduled)', venue:'ClickUP / Online', start:'09:30', end:'12:30'},
+];
+
+const EVENTS = [
+  {date:'2026-08-07', mod:'284', label:'Class Test 1 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
+  {date:'2026-08-22', mod:'284', label:'Semester Test 1', time:'10:00–11:30', venue:'Informatorium Labs'},
+  {date:'2026-08-28', mod:'330', label:'Semester Test 1', time:'10:00–11:30', venue:'Informatorium Labs'},
+  {date:'2026-09-11', mod:'284', label:'Class Test 2 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
+  {date:'2026-10-12', mod:'284', label:'Semester Test 2', time:'10:00–11:30', venue:'Informatorium Labs'},
+  {date:'2026-10-30', mod:'284', label:'Class Test 3 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
+  {date:'2026-11-11', mod:'284', label:'Final Exam — Paper 1', time:'07:30', venue:'Hatfield'},
+  {date:'2026-11-21', mod:'330', label:'Final Exam — Paper 1', time:'15:00', venue:'Hatfield'},
+];
+
+const SEGMENTS = [
+  {start:'2026-07-20', end:'2026-08-21', type:'lectures'},
+  {start:'2026-08-22', end:'2026-09-05', type:'test'},
+  {start:'2026-09-06', end:'2026-09-16', type:'lectures'},
+  {start:'2026-09-17', end:'2026-09-27', type:'recess'},
+  {start:'2026-09-28', end:'2026-10-09', type:'lectures'},
+  {start:'2026-10-10', end:'2026-10-24', type:'test'},
+  {start:'2026-10-25', end:'2026-11-05', type:'lectures'},
+  {start:'2026-11-06', end:'2026-11-06', type:'study'},
+  {start:'2026-11-07', end:'2026-11-25', type:'exam'},
+  {start:'2026-11-26', end:'2026-11-29', type:'lectures'},
+  {start:'2026-11-30', end:'2026-12-05', type:'supp'},
+];
+
+const SEM_START = new Date('2026-07-20T00:00:00');
+const SEM_END   = new Date('2026-12-05T23:59:59');
+const totalMs = SEM_END - SEM_START;
+
+function pct(dateStr){
+  const d = new Date(dateStr+'T12:00:00');
+  return Math.max(0, Math.min(100, ((d - SEM_START) / totalMs) * 100));
+}
+function fmtDate(dateStr){
+  const d = new Date(dateStr+'T12:00:00');
+  return d.toLocaleDateString('en-ZA', {weekday:'short', day:'numeric', month:'short'});
+}
+function daysLeftLabel(dateStr){
+  const now = new Date();
+  const target = new Date(dateStr+'T12:00:00');
+  const diff = Math.round((target - new Date(now.toDateString())) / 86400000);
+  if(diff === 0) return 'TODAY';
+  if(diff === 1) return 'TOMORROW';
+  if(diff > 1) return 'in ' + diff + ' days';
+  return Math.abs(diff) + ' days ago';
+}
+
+/* ---------------- TIMETABLE RENDER ---------------- */
+const HOURS = ['07:30','08:30','09:30','10:30','11:30','12:30','13:30','14:30','15:30','16:30','17:30'];
+const timeCol = document.getElementById('timeCol');
+HOURS.forEach(h=>{
+  const d = document.createElement('div');
+  d.className='tt-time'; d.textContent=h;
+  timeCol.appendChild(d);
+});
+
+function toMinutes(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+const dayHeight = 24 * 10; // 10 hour blocks * 24px
+
+for(let day=1; day<=5; day++){
+  const col = document.getElementById('col-'+day);
+  // hour guides
+  for(let i=1;i<=10;i++){
+    const g = document.createElement('div');
+    g.className='hr-guide'; g.style.top = (i*24)+'px';
+    col.appendChild(g);
+  }
+  col.style.height = dayHeight+'px';
+  TT.filter(b=>b.day===day).forEach(b=>{
+    const top = (toMinutes(b.start)-450)/60*24;
+    const height = (toMinutes(b.end)-toMinutes(b.start))/60*24;
+    const el = document.createElement('div');
+    const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
+    el.className = 'block '+cls;
+    el.style.top = top+'px';
+    el.style.height = height+'px';
+    el.dataset.mod = b.mod;
+    el.dataset.group = b.group;
+    const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
+    el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="venue">${b.venue}</span>`;
+    col.appendChild(el);
+  });
+}
+
+/* now-line */
+function renderNowLine(){
+  document.querySelectorAll('.nowline').forEach(n=>n.remove());
+  document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('today'));
+  document.querySelectorAll('.tt-head-row div').forEach(c=>c.classList.remove('today-col'));
+
+  const now = new Date();
+  const wd = now.getDay(); // 0 Sun .. 6 Sat
+  if(wd>=1 && wd<=5){
+    const col = document.getElementById('col-'+wd);
+    const headCell = document.querySelector(`.tt-head-row div[data-day="${wd}"]`);
+    if(col){ col.classList.add('today'); }
+    if(headCell){ headCell.classList.add('today-col'); }
+
+    const mins = now.getHours()*60+now.getMinutes();
+    if(mins>=450 && mins<=1050){
+      const top = (mins-450)/60*24;
+      const line = document.createElement('div');
+      line.className='nowline';
+      line.style.top = top+'px';
+      line.innerHTML = `<span class="tag">${now.toTimeString().slice(0,5)}</span>`;
+      col.appendChild(line);
+    }
+  }
+}
+renderNowLine();
+setInterval(renderNowLine, 60000);
+
+/* filters */
+let modActive = {284:true, 330:true};
+let groupSel = {284:'all', 330:'all'};
+
+function applyFilters(){
+  document.querySelectorAll('.block').forEach(el=>{
+    const m = el.dataset.mod;
+    const g = el.dataset.group;
+    let show = true;
+    if(m==='284' || m==='330'){
+      if(!modActive[m]) show = false;
+      if(g && groupSel[m] !== 'all' && groupSel[m] !== g) show = false;
+    }
+    el.classList.toggle('dim', !show);
+  });
+}
+
+document.querySelectorAll('.chip[data-mod]').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    const m = chip.dataset.mod;
+    modActive[m] = !modActive[m];
+    chip.classList.toggle('on', modActive[m]);
+    applyFilters();
+  });
+});
+
+document.querySelectorAll('.seg').forEach(seg=>{
+  const mod = seg.dataset.segfor;
+  seg.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      seg.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      groupSel[mod] = btn.dataset.val;
+      applyFilters();
+    });
+  });
+});
+
+/* ---------------- CALENDAR RENDER ---------------- */
+const timeline = document.getElementById('timeline');
+SEGMENTS.forEach(s=>{
+  const left = pct(s.start);
+  const right = pct(s.end);
+  const width = Math.max(right-left, 0.3);
+  const el = document.createElement('div');
+  el.className = 'seg-block '+s.type;
+  el.style.left = left+'%';
+  el.style.width = width+'%';
+  el.title = s.type.toUpperCase()+': '+fmtDate(s.start)+' – '+fmtDate(s.end);
+  timeline.appendChild(el);
+});
+
+// now marker on timeline
+const now = new Date();
+if(now >= SEM_START && now <= SEM_END){
+  const nowPct = ((now-SEM_START)/totalMs)*100;
+  const nm = document.createElement('div');
+  nm.className='now-marker';
+  nm.style.left = nowPct+'%';
+  nm.innerHTML = `<span class="tag">TODAY · ${now.toLocaleDateString('en-ZA',{day:'numeric',month:'short'})}</span>`;
+  timeline.appendChild(nm);
+}
+
+// pins + table rows
+const eventRows = document.getElementById('eventRows');
+const detailPanel = document.getElementById('detailPanel');
+const dpTitle = document.getElementById('dpTitle');
+const dpDesc = document.getElementById('dpDesc');
+const dpCountdown = document.getElementById('dpCountdown');
+
+function selectEvent(ev, pinEl, rowEl){
+  document.querySelectorAll('.pin').forEach(p=>p.classList.remove('selected'));
+  document.querySelectorAll('tr.ev').forEach(r=>r.classList.remove('selected'));
+  if(pinEl) pinEl.classList.add('selected');
+  if(rowEl) rowEl.classList.add('selected');
+
+  const modLabel = ev.mod==='284' ? 'COS 284' : 'COS 330';
+  dpTitle.textContent = modLabel+' — '+ev.label;
+  dpDesc.textContent = fmtDate(ev.date)+' · '+ev.time+' · '+ev.venue;
+  dpCountdown.textContent = daysLeftLabel(ev.date);
+  detailPanel.classList.add('show');
+}
+
+EVENTS.forEach((ev, i)=>{
+  const left = pct(ev.date);
+
+  const pin = document.createElement('div');
+  pin.className='pin';
+  pin.style.left = left+'%';
+  pin.innerHTML = `<div class="lab">${fmtDate(ev.date).split(',')[1].trim()}</div><div class="stem"></div><div class="dot"></div>`;
+  pin.style.top = (i%2===0 ? '-36px' : '-52px');
+  timeline.appendChild(pin);
+
+  const row = document.createElement('tr');
+  row.className='ev';
+  row.innerHTML = `<td>${fmtDate(ev.date)}</td>
+    <td><span class="tag2 ${ev.mod==='284'?'c284':'c330'}">${ev.mod==='284'?'COS 284':'COS 330'}</span></td>
+    <td>${ev.label}</td><td>${ev.time}</td><td>${ev.venue}</td>
+    <td class="days-left">${daysLeftLabel(ev.date)}</td>`;
+  eventRows.appendChild(row);
+
+  pin.addEventListener('click', ()=>selectEvent(ev, pin, row));
+  row.addEventListener('click', ()=>selectEvent(ev, pin, row));
+});
+
+/* ---------------- TABS ---------------- */
+const tabBtns = document.querySelectorAll('.tab-btn');
+const views = {tt: document.getElementById('view-tt'), cal: document.getElementById('view-cal')};
+const ttFilterbar = document.getElementById('ttFilterbar');
+tabBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    tabBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    Object.values(views).forEach(v=>v.classList.remove('active'));
+    views[btn.dataset.tab].classList.add('active');
+    ttFilterbar.style.display = btn.dataset.tab==='tt' ? 'flex' : 'none';
+  });
+});
+</script>
+</body>
+</html>
