@@ -11,30 +11,40 @@
 
 :root{
   --cream:#f2e2c4;
+  --card:#fbf3e2;
   --ink:#261d11;
   --red:#d63a30;
   --yellow:#f2b705;
   --blue:#0477bf;
   --green:#7ea86b;
   --line: rgba(38,29,17,0.16);
-  --panel-bg:#fff8ea;
+  --gap-md: 20px;
 }
 :root[data-theme="dark"]{
   --cream:#1b1712;
+  --card:#241f18;
   --ink:#f2e2c4;
   --line: rgba(242,226,196,0.14);
-  --panel-bg:#241f18;
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;background:#3f382e;font-family:'Space Grotesk',sans-serif;color:var(--ink);}
 :root[data-theme="dark"] body{background:#0d0b09;}
+:root[data-theme="dark"] .detail-panel{background:#241f18;}
+*{box-sizing:border-box;}
+html{font-size:16px;}
+@media (min-width:1600px){ html{font-size:18px;} }
+@media (min-width:2200px){ html{font-size:21px;} }
+/* short landscape viewports (phones on their side) were feeling cramped — bump the base scale */
+@media (orientation:landscape) and (max-height:520px){
+  html{font-size:17.5px;}
+}
+
+html,body{margin:0;padding:0;background:#3f382e;font-family:'Space Grotesk',sans-serif;color:var(--ink);}
 
 /* ---------- shell ---------- */
 .shell{
-  max-width:1040px;
-  margin:24px auto 60px auto;
+  width:min(96vw, 1180px);
+  margin:clamp(12px,3vw,32px) auto clamp(30px,6vw,70px) auto;
   background:var(--cream);
-  border-radius:4px;
+  border-radius:6px;
   position:relative;
   overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,0.5);
@@ -45,232 +55,331 @@ html,body{margin:0;padding:0;background:#3f382e;font-family:'Space Grotesk',sans
     repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 20%),
     repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 8%);
   pointer-events:none;
-  opacity:0.6;
+  opacity:0.5;
+  z-index:0;
 }
 .deco-circle{position:absolute;border-radius:50%;z-index:0;}
-.deco-tri{position:absolute;width:0;height:0;z-index:0;}
 
 /* ---------- header ---------- */
 header{
   position:relative; z-index:2;
-  padding:34px 40px 20px 40px;
+  padding: clamp(22px,4vw,44px) clamp(20px,4.5vw,52px) clamp(14px,2vw,22px) clamp(20px,4.5vw,52px);
+}
+@media (orientation:landscape) and (max-height:520px){
+  header{padding-top:20px; padding-bottom:16px;}
 }
 .eyebrow{
-  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.16em;
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.16em;
   text-transform:uppercase; color:var(--red); font-weight:700;
 }
 .wordmark{
-  font-family:'Archivo Black',sans-serif; font-size:56px; line-height:0.9;
-  margin-top:6px; letter-spacing:-0.01em;
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(34px, 6.4vw, 64px);
+  line-height:0.92;
+  margin-top:10px; letter-spacing:-0.01em;
 }
-.wordmark .a{color:var(--yellow); -webkit-text-stroke:1.4px var(--ink);}
-.wordmark .b{color:var(--blue); -webkit-text-stroke:1.4px var(--ink);}
-.subhead{margin-top:8px; font-weight:600; font-size:13.5px;}
+.wordmark .a{color:var(--yellow); -webkit-text-stroke:1.3px var(--ink);}
+.wordmark .b{color:var(--blue); -webkit-text-stroke:1.3px var(--ink);}
+.subhead{margin-top:12px; font-weight:600; font-size:clamp(12px,1.4vw,15px); line-height:1.5; max-width:640px;}
 
 .theme-toggle{
-  position:absolute; top:30px; right:36px; z-index:3;
+  position:absolute; top:clamp(20px,3.5vw,32px); right:clamp(16px,3.5vw,40px); z-index:3;
   width:34px; height:34px; border-radius:50%; border:2px solid var(--ink);
   background:var(--cream); cursor:pointer; font-size:15px; line-height:1;
   display:flex; align-items:center; justify-content:center;
 }
 
 .next-banner{
-  margin-top:18px; display:inline-flex; align-items:center; gap:8px;
-  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  margin-top:16px; display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:700;
   background:var(--ink); color:var(--cream); padding:7px 14px; border-radius:14px;
   max-width:100%;
 }
 .next-banner strong{color:var(--yellow);}
-.banner-cd{background:var(--red); color:var(--cream); padding:1px 8px; border-radius:10px; margin-left:4px;}
+.banner-cd{background:var(--red); color:var(--cream); padding:1px 8px; border-radius:10px;}
 
 /* ---------- tabs ---------- */
 .tabs{
-  display:flex; gap:0; margin-top:26px; border-bottom:2px solid var(--ink);
+  display:flex; gap:0; margin-top:clamp(20px,3vw,32px); border-bottom:2px solid var(--ink);
+  overflow-x:auto;
 }
 .tab-btn{
-  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;
-  text-transform:uppercase; letter-spacing:0.08em;
+  font-family:'JetBrains Mono',monospace; font-size:0.78rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap;
   background:none; border:none; cursor:pointer; color:var(--ink);
-  padding:10px 18px; position:relative; opacity:0.5;
+  padding:12px 20px; position:relative; opacity:0.5;
   transition:opacity 0.2s ease;
 }
 .tab-btn:hover{opacity:0.85;}
 .tab-btn.active{opacity:1;}
-.tab-btn.active::after{
-  content:''; position:absolute; left:0; right:0; bottom:-2px; height:3px;
-  background:var(--red);
-}
+.tab-btn.active::after{content:''; position:absolute; left:0; right:0; bottom:-2px; height:3px; background:var(--red);}
 .tab-btn:nth-child(2).active::after{background:var(--blue);}
 
 /* ---------- filter bar ---------- */
 .filterbar{
   position:relative; z-index:2;
-  display:flex; flex-wrap:wrap; gap:22px; align-items:center;
-  padding:18px 40px 4px 40px;
-  font-family:'JetBrains Mono',monospace; font-size:10.5px;
+  display:flex; flex-wrap:wrap; gap:var(--gap-md);
+  align-items:center;
+  padding: clamp(16px,2.6vw,26px) clamp(20px,4.5vw,52px) 4px clamp(20px,4.5vw,52px);
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem;
 }
-.filter-group{display:flex; align-items:center; gap:8px;}
+.filter-group{display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
 .filter-group .lbl{text-transform:uppercase; letter-spacing:0.06em; opacity:0.6; font-weight:700;}
 .chip{
   border:2px solid var(--ink); background:var(--cream); border-radius:14px;
-  padding:4px 12px; cursor:pointer; font-weight:700; font-size:10.5px;
+  padding:5px 13px; cursor:pointer; font-weight:700; font-size:0.68rem;
   transition:all 0.15s ease; user-select:none;
 }
 .chip.on.c284{background:var(--blue); color:var(--cream);}
 .chip.on.c330{background:var(--red); color:var(--cream);}
 .chip:not(.on){opacity:0.4;}
-.seg{
-  display:flex; border:2px solid var(--ink); border-radius:14px; overflow:hidden;
-}
+.seg{display:flex; border:2px solid var(--ink); border-radius:14px; overflow:hidden;}
 .seg button{
   border:none; background:var(--cream); font-family:'JetBrains Mono',monospace;
-  font-size:10px; font-weight:700; padding:4px 10px; cursor:pointer; color:var(--ink);
+  font-size:0.65rem; font-weight:700; padding:5px 11px; cursor:pointer; color:var(--ink);
   border-right:1px solid var(--ink);
 }
 .seg button:last-child{border-right:none;}
 .seg button.active{background:var(--ink); color:var(--cream);}
 
-/* ---------- day switcher (mobile only) ---------- */
-.day-switcher{display:none;}
-
 /* ---------- views ---------- */
-.view{display:none; position:relative; z-index:2; padding:14px 40px 40px 40px;}
+.view{display:none; position:relative; z-index:2; padding: clamp(18px,2.5vw,26px) clamp(20px,4.5vw,52px) clamp(30px,4.5vw,52px) clamp(20px,4.5vw,52px);}
 .view.active{display:block; animation:fadein 0.35s ease;}
 @keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+@media (orientation:landscape) and (max-height:520px){
+  .view{padding-top:16px; padding-bottom:26px;}
+}
 
-/* ---------- timetable ---------- */
-.tt-wrap{border:2px solid var(--ink); background:var(--cream); border-radius:3px; overflow:hidden; margin-top:6px;}
-.tt-head-row{display:grid; grid-template-columns:58px repeat(5,1fr); background:var(--ink);}
+/* ================= TIMETABLE — grid layout (tablet+) =================
+   Elevated card: solid --card fill + hard offset shadow so it visually
+   lifts clear of the decorative background grid instead of blending into it. */
+.tt-wrap{
+  position:relative;
+  border:2px solid var(--ink);
+  background:var(--card);
+  border-radius:5px;
+  overflow:hidden;
+  margin:14px 8px 22px 0;
+  box-shadow:7px 8px 0 var(--ink);
+  z-index:2;
+}
+.tt-head-row{display:grid; grid-template-columns:64px repeat(5,1fr); background:var(--ink);}
 .tt-head-row div{
-  color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-  text-transform:uppercase; letter-spacing:0.05em; padding:8px 4px; text-align:center;
+  color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.05em; padding:9px 4px; text-align:center;
   border-left:1px solid rgba(242,226,196,0.25);
 }
 .tt-head-row div.today-col{background:var(--red);}
-.tt-body{display:grid; grid-template-columns:58px repeat(5,1fr); position:relative;}
-.tt-time-col{display:flex; flex-direction:column;}
+.tt-body{display:grid; grid-template-columns:64px repeat(5,1fr); position:relative;}
+.tt-time-col{position:relative;}
 .tt-time{
-  font-family:'JetBrains Mono',monospace; font-size:9px; opacity:0.6; text-align:right;
-  padding-right:6px; height:60px; border-top:1px solid var(--line);
+  position:absolute; left:0; right:0; transform:translateY(-50%);
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; opacity:0.6; text-align:right;
+  padding-right:6px;
 }
+.tt-time.major{opacity:0.85; font-weight:700;}
 .day-col{position:relative; border-left:1px solid var(--line);}
-.day-col.today{background:rgba(214,58,48,0.06);}
+.day-col.today{background:rgba(214,58,48,0.07);}
 .hr-guide{position:absolute; left:0; right:0; border-top:1px solid var(--line); pointer-events:none;}
+.hr-guide.major{border-top:1px solid rgba(38,29,17,0.32);}
 
 .block{
-  position:absolute; left:3px; right:3px; border-radius:4px; border:2px solid var(--ink);
-  padding:6px 7px; font-size:11px; line-height:1.3; overflow:hidden; cursor:default;
+  position:absolute; left:4px; right:4px; border-radius:5px; border:2px solid var(--ink);
+  padding:6px 7px; font-size:0.62rem; line-height:1.3; overflow:hidden; cursor:default;
   transition:opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .block:hover{transform:translateY(-1px) scale(1.015); box-shadow:3px 4px 0 var(--ink); z-index:5;}
-.block .mod{font-family:'Archivo Black',sans-serif; font-size:13px; display:block;}
-.block .kind{font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase; opacity:0.9; display:block; margin-top:2px;}
-.block .venue{font-size:10.5px; margin-top:3px; display:block; font-weight:600;}
+.block .mod{font-family:'Archivo Black',sans-serif; font-size:0.72rem; display:block;}
+.block .kind{font-family:'JetBrains Mono',monospace; font-size:0.55rem; text-transform:uppercase; opacity:0.9; display:block; margin-top:2px;}
+.block .venue{font-size:0.58rem; margin-top:3px; display:block; font-weight:600;}
+.block .times{font-family:'JetBrains Mono',monospace; font-size:0.55rem; margin-top:2px; display:block; opacity:0.85;}
 .b284{background:var(--blue); color:var(--cream);}
 .b330{background:var(--red); color:var(--cream);}
 .btest{background:var(--yellow); color:var(--ink);}
 .block.dim{opacity:0.12; pointer-events:none;}
 
-.nowline{
-  position:absolute; left:0; right:0; height:0; border-top:2px solid var(--red); z-index:6;
-  pointer-events:none;
-}
-.nowline::before{
-  content:''; position:absolute; left:-5px; top:-5px; width:9px; height:9px; border-radius:50%;
-  background:var(--red); border:2px solid var(--cream);
-}
-.nowline .tag{
-  position:absolute; left:6px; top:-9px; background:var(--red); color:var(--cream);
-  font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:1px 5px; border-radius:2px;
-}
+.nowline{position:absolute; left:0; right:0; height:0; border-top:2px solid var(--red); z-index:6; pointer-events:none;}
+.nowline::before{content:''; position:absolute; left:-5px; top:-5px; width:9px; height:9px; border-radius:50%; background:var(--red); border:2px solid var(--cream);}
+.nowline .tag{position:absolute; left:6px; top:-9px; background:var(--red); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:0.5rem; font-weight:700; padding:1px 5px; border-radius:2px;}
 
-.legend-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:10px; align-items:center;}
+/* ================= TIMETABLE — agenda/card layout (phone) ================= */
+.tt-agenda{display:none; flex-direction:column; gap:var(--gap-md); margin-top:8px;}
+.day-card{border:2px solid var(--ink); border-radius:6px; overflow:hidden; background:var(--card); box-shadow:4px 5px 0 var(--ink);}
+.day-card .day-title{
+  background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace;
+  font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em;
+  padding:9px 14px; display:flex; justify-content:space-between; align-items:center;
+}
+.day-card.today .day-title{background:var(--red);}
+.day-card .items{display:flex; flex-direction:column; gap:10px; padding:12px 14px;}
+.agenda-item{
+  border:2px solid var(--ink); border-radius:5px; padding:9px 11px; font-size:0.72rem; line-height:1.4;
+}
+.agenda-item .mod{font-family:'Archivo Black',sans-serif; font-size:0.8rem; display:block;}
+.agenda-item .kind{font-family:'JetBrains Mono',monospace; font-size:0.6rem; text-transform:uppercase; opacity:0.85; display:block; margin-top:2px;}
+.agenda-item .meta{font-size:0.68rem; margin-top:4px; display:block; font-weight:600;}
+.agenda-item.dim{opacity:0.15;}
+.no-items{opacity:0.5; font-size:0.7rem; font-style:italic; padding:0 14px 12px 14px;}
+
+/* ---------- shared legend / note ---------- */
+.legend-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:22px; font-family:'JetBrains Mono',monospace; font-size:0.65rem; align-items:center;}
 .swatch{width:13px; height:13px; border:2px solid var(--ink); display:inline-block; margin-right:6px; vertical-align:middle; border-radius:3px;}
+.note{margin-top:18px; font-size:0.7rem; line-height:1.6; max-width:640px; border-left:3px solid var(--red); padding-left:12px;}
 
-.note{margin-top:16px; font-size:10.5px; line-height:1.55; max-width:640px; border-left:3px solid var(--red); padding-left:10px;}
+/* ================= CALENDAR — progress bar strip ================= */
+.prog-section{margin-top:6px;}
+.prog-readout{
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:700;
+  display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline;
+}
+.prog-readout .big{font-family:'Archivo Black',sans-serif; font-size:clamp(20px,2.8vw,28px); font-weight:normal;}
+.prog-readout .sub{opacity:0.6; font-weight:500;}
+.prog-months{display:flex; margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;}
+.prog-months div{border-left:1px solid var(--ink); padding-left:5px;}
+.prog-months div:first-child{border-left:none;}
+.prog-track{
+  position:relative; height:34px; border:2px solid var(--ink); border-radius:4px; margin:4px 8px 20px 0; overflow:visible;
+  background:var(--card); box-shadow:5px 6px 0 var(--ink);
+}
+.prog-seg{position:absolute; top:0; bottom:0; border-right:1px solid var(--ink);}
+.prog-seg.lectures{background:var(--card);}
+.prog-seg.test{background:var(--green);}
+.prog-seg.recess{background:var(--yellow);}
+.prog-seg.exam{background:var(--blue);}
+.prog-seg.study{background:#b9b2a4;}
+.prog-seg.supp{background:#6b5b4a;}
+.prog-seg.gap{background:repeating-linear-gradient(45deg, var(--card), var(--card) 6px, var(--line) 6px, var(--line) 12px);}
+.prog-fill{position:absolute; top:0; bottom:0; left:0; background:rgba(38,29,17,0.16); border-right:2px dashed var(--ink); pointer-events:none;}
+.prog-now{position:absolute; top:-8px; bottom:-8px; width:0; border-left:3px solid var(--ink); z-index:5;}
+.prog-now .dot{position:absolute; top:-7px; left:-6px; width:12px; height:12px; border-radius:50%; background:var(--red); border:2px solid var(--cream);}
+.prog-now .lab{position:absolute; top:-30px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:700; padding:3px 8px; border-radius:3px; white-space:nowrap;}
 
-/* ---------- calendar / timeline ---------- */
-.month-labels{display:flex; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:4px;}
-.month-labels div{flex:1; border-left:1px solid var(--ink); padding-left:4px;}
-.month-labels div:first-child{border-left:none;}
-.timeline{position:relative; height:48px; border:2px solid var(--ink); overflow:visible; margin-top:2px;}
-.seg-block{position:absolute; top:0; bottom:0; border-right:1px solid var(--ink); transition:filter 0.15s ease;}
-.seg-block:hover{filter:brightness(1.08);}
-.seg-block.lectures{background:var(--cream);}
-.seg-block.test{background:var(--green);}
-.seg-block.recess{background:var(--yellow);}
-.seg-block.exam{background:var(--blue);}
-.seg-block.study{background:#b9b2a4;}
-.seg-block.supp{background:#6b5b4a;}
+/* ================= CALENDAR — month view ================= */
+.cal-nav{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  margin-top:36px;
+}
+.cal-nav .month-title{font-family:'Archivo Black',sans-serif; font-size:clamp(19px,2.6vw,26px);}
+.cal-nav .btns{display:flex; gap:8px; align-items:center;}
+.navbtn{
+  border:2px solid var(--ink); background:var(--cream); width:36px; height:36px; border-radius:50%;
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;
+}
+.navbtn:hover:not(:disabled){background:var(--ink); color:var(--cream);}
+.navbtn:disabled{opacity:0.25; cursor:not-allowed;}
+.todaybtn{
+  border:2px solid var(--ink); background:var(--yellow); border-radius:14px; padding:7px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.06em; cursor:pointer;
+}
 
-.pin{position:absolute; top:-36px; transform:translateX(-50%); text-align:center; z-index:5; cursor:pointer;}
-.pin .dot{width:10px; height:10px; border-radius:50%; background:var(--red); border:2px solid var(--ink); margin:0 auto 3px auto; transition:transform 0.15s ease;}
-.pin:hover .dot{transform:scale(1.35);}
-.pin .lab{font-family:'JetBrains Mono',monospace; font-size:7.3px; white-space:nowrap; background:var(--ink); color:var(--cream); padding:1px 4px; border-radius:2px; opacity:0.9;}
-.pin .stem{width:1px; height:28px; background:var(--ink); margin:2px auto 0 auto;}
-.pin.selected .dot{background:var(--yellow); transform:scale(1.35);}
+.cal-grid{
+  position:relative;
+  margin:16px 8px 22px 0;
+  border:2px solid var(--ink); border-radius:4px; overflow:hidden;
+  background:var(--card);
+  box-shadow:7px 8px 0 var(--ink);
+  z-index:2;
+}
+.cal-dow{display:grid; grid-template-columns:repeat(7,1fr); background:var(--ink);}
+.cal-dow div{
+  color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:0.62rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.05em; text-align:center; padding:8px 2px;
+}
+.cal-weeks{display:grid; grid-template-columns:repeat(7,1fr);}
+.cal-cell{
+  position:relative; min-height:clamp(52px,7vw,86px); border-top:1px solid var(--line); border-left:1px solid var(--line);
+  padding:6px; cursor:pointer; transition:background 0.15s ease;
+}
+.cal-cell:nth-child(7n+1){border-left:none;}
+.cal-cell.outside{opacity:0.3; cursor:default;}
+.cal-cell .num{font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:700;}
+.cal-cell.selected{outline:3px solid var(--ink); outline-offset:-3px; z-index:2;}
+.cal-cell.lectures{background:var(--card);}
+.cal-cell.test{background:var(--green);}
+.cal-cell.recess{background:var(--yellow);}
+.cal-cell.exam{background:var(--blue); color:var(--cream);}
+.cal-cell.study{background:#b9b2a4;}
+.cal-cell.supp{background:#6b5b4a; color:var(--cream);}
+.cal-cell.gap{background:repeating-linear-gradient(45deg, var(--card), var(--card) 6px, var(--line) 6px, var(--line) 12px);}
+.cal-cell .dots{position:absolute; bottom:5px; left:6px; display:flex; gap:3px;}
+.cal-cell .dot{width:8px; height:8px; border-radius:50%; border:1.5px solid var(--ink);}
+.cal-cell .dot.c284{background:var(--blue);}
+.cal-cell .dot.c330{background:var(--red);}
+.cal-cell.today .num{
+  background:var(--red); color:var(--cream); border-radius:50%; width:20px; height:20px;
+  display:flex; align-items:center; justify-content:center;
+}
 
-.now-marker{position:absolute; top:-14px; bottom:-14px; width:0; border-left:2px dashed var(--ink); z-index:4;}
-.now-marker .tag{position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; padding:2px 6px; border-radius:2px; white-space:nowrap;}
-
-.legend2{display:flex; flex-wrap:wrap; gap:14px; margin-top:44px; font-family:'JetBrains Mono',monospace; font-size:9.5px; align-items:center;}
+.legend2{display:flex; flex-wrap:wrap; gap:14px; margin-top:20px; font-family:'JetBrains Mono',monospace; font-size:0.62rem; align-items:center;}
 
 .detail-panel{
-  margin-top:20px; border:2px solid var(--ink); border-radius:4px; background:var(--panel-bg);
+  margin-top:20px; border:2px solid var(--ink); border-radius:6px; background:#fff8ea;
   padding:16px 18px; display:none;
 }
 .detail-panel.show{display:block; animation:fadein 0.25s ease;}
-.detail-panel .dt{font-family:'Archivo Black',sans-serif; font-size:18px;}
-.detail-panel .dd{font-family:'Space Grotesk',sans-serif; font-size:12px; margin-top:4px;}
+.detail-panel .dt{font-family:'Archivo Black',sans-serif; font-size:clamp(16px,2vw,19px);}
+.detail-panel .dd{font-size:0.75rem; margin-top:6px; line-height:1.5;}
 .detail-panel .cd{
-  display:inline-block; margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px;
-  font-weight:700; padding:3px 10px; border-radius:12px; background:var(--ink); color:var(--cream);
+  display:inline-block; margin-top:9px; font-family:'JetBrains Mono',monospace; font-size:0.68rem;
+  font-weight:700; padding:4px 11px; border-radius:12px; background:var(--ink); color:var(--cream);
 }
 
-.datatable{border-collapse:collapse; width:100%; font-size:11px; margin-top:22px;}
+/* ---------- summary agenda list ---------- */
+.summary-head{margin-top:34px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+.summary-head .st{font-family:'Archivo Black',sans-serif; font-size:clamp(17px,2.2vw,22px);}
+.summary-head .sc{font-family:'JetBrains Mono',monospace; font-size:0.65rem; opacity:0.55;}
+
+.datatable{border-collapse:collapse; width:100%; font-size:0.72rem; margin-top:14px;}
 .datatable th{
-  background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:9.5px;
-  text-transform:uppercase; letter-spacing:0.05em; text-align:left; padding:7px 8px; font-weight:700;
+  background:var(--ink); color:var(--cream); font-family:'JetBrains Mono',monospace; font-size:0.62rem;
+  text-transform:uppercase; letter-spacing:0.05em; text-align:left; padding:9px 10px; font-weight:700;
 }
-.datatable td{padding:7px 8px; border-bottom:1px solid var(--line);}
+.datatable td{padding:9px 10px; border-bottom:1px solid var(--line);}
 .datatable tr.ev{cursor:pointer; transition:background 0.15s ease;}
 .datatable tr.ev:hover td{background:rgba(214,58,48,0.08);}
 .datatable tr.ev.selected td{background:rgba(242,183,5,0.35);}
-.tag2{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; padding:1px 6px; border-radius:8px; color:var(--cream);}
+.tag2{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:8px; color:var(--cream);}
 .tag2.c284{background:var(--blue);}
 .tag2.c330{background:var(--red);}
-.days-left{font-family:'JetBrains Mono',monospace; font-size:9.5px; opacity:0.65;}
+.days-left{font-family:'JetBrains Mono',monospace; font-size:0.62rem; opacity:0.65; white-space:nowrap;}
 
-.quote-block{margin-top:22px; border-left:3px solid var(--ink); padding-left:12px; font-size:11px; line-height:1.5; max-width:560px; font-style:italic;}
+.quote-block{margin-top:26px; border-left:3px solid var(--ink); padding-left:13px; font-size:0.72rem; line-height:1.6; max-width:580px; font-style:italic;}
 
 footer{
-  position:relative; z-index:2; background:var(--ink); color:var(--cream); padding:12px 40px;
-  display:flex; justify-content:space-between; align-items:center;
-  font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.06em;
+  position:relative; z-index:2; background:var(--ink); color:var(--cream);
+  padding: 16px clamp(20px,4.5vw,52px);
+  display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; letter-spacing:0.06em;
 }
 
-@media (max-width:720px){
-  header, .filterbar, .view, footer{padding-left:18px; padding-right:18px;}
-  .wordmark{font-size:38px;}
-  .tt-head-row div, .tt-time{font-size:8px;}
-  .month-labels div{font-size:8px;}
-  .theme-toggle{top:20px; right:16px;}
+/* ================= RESPONSIVE BREAKPOINTS ================= */
+@media (max-width:640px){
+  .tt-wrap{display:none;}
+  .tt-agenda{display:flex;}
 
-  .day-switcher{
-    display:flex; gap:6px; padding:10px 18px 0 18px;
-    font-family:'JetBrains Mono',monospace; font-size:10px;
+  .datatable, .datatable thead, .datatable tbody, .datatable th, .datatable td, .datatable tr{display:block;}
+  .datatable thead{display:none;}
+  .datatable tr.ev{border:2px solid var(--ink); border-radius:6px; margin-bottom:10px; padding:10px 12px;}
+  .datatable td{border:none; padding:3px 0;}
+  .datatable td::before{
+    content:attr(data-label); font-family:'JetBrains Mono',monospace; font-size:0.55rem;
+    text-transform:uppercase; letter-spacing:0.05em; opacity:0.55; display:block;
   }
-  .day-switcher button{
-    flex:1; border:2px solid var(--ink); background:var(--cream); color:var(--ink);
-    padding:6px 0; font-weight:700; cursor:pointer; border-radius:4px;
-  }
-  .day-switcher button.active{background:var(--ink); color:var(--cream);}
-
-  .tt-head-row.mobile-mode, .tt-body.mobile-mode{grid-template-columns:44px 1fr;}
-  .tt-body.mobile-mode .day-col{display:none;}
-  .tt-body.mobile-mode .day-col.mobile-show{display:block;}
-  .tt-head-row.mobile-mode div[data-day]{display:none;}
-  .tt-head-row.mobile-mode div[data-day].mobile-show{display:block;}
+  .cal-cell{min-height:44px; padding:4px;}
+  .cal-cell .dots{bottom:3px; left:4px;}
+  .prog-months div:nth-child(n){font-size:0.55rem;}
+}
+@media (min-width:641px) and (max-width:1024px){
+  .shell{width:min(97vw, 1000px);}
+}
+@media (min-width:1600px){
+  .shell{width:min(90vw, 1400px);}
+  .cal-cell{min-height:100px;}
+}
+@media (min-width:2200px){
+  .shell{width:min(80vw, 1600px);}
 }
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important;}
@@ -281,14 +390,14 @@ footer{
 
 <div class="shell">
   <div class="gridlines"></div>
-  <div class="deco-circle" style="width:160px;height:160px;background:var(--red);top:-60px;right:-60px;opacity:0.9;"></div>
-  <div class="deco-circle" style="width:90px;height:90px;background:var(--yellow);bottom:-30px;left:-30px;opacity:0.85;"></div>
+  <div class="deco-circle" style="width:12vw;min-width:110px;max-width:180px;aspect-ratio:1;background:var(--red);top:-6vw;right:-6vw;opacity:0.9;"></div>
+  <div class="deco-circle" style="width:7vw;min-width:60px;max-width:100px;aspect-ratio:1;background:var(--yellow);bottom:-3vw;left:-3vw;opacity:0.85;"></div>
 
   <header>
     <button class="theme-toggle" id="themeToggle" title="Toggle dark / light theme">&#9789;</button>
     <div class="eyebrow">University of Pretoria · Hatfield · S2 2026</div>
     <div class="wordmark"><span class="a">SCHED</span><span class="b">ULE</span></div>
-    <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 — live timetable &amp; semester calendar</div>
+    <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 (Computer Security &amp; Ethics) — live timetable &amp; semester calendar</div>
 
     <div><span class="next-banner" id="nextBanner">Loading next class…</span></div>
 
@@ -323,15 +432,8 @@ footer{
     </div>
   </div>
 
-  <div class="day-switcher" id="daySwitcher">
-    <button data-day="1">Mon</button>
-    <button data-day="2">Tue</button>
-    <button data-day="3">Wed</button>
-    <button data-day="4">Thu</button>
-    <button data-day="5">Fri</button>
-  </div>
-
   <div class="view active" id="view-tt">
+
     <div class="tt-wrap">
       <div class="tt-head-row" id="ttHeadRow">
         <div>Time</div><div data-day="1">Mon</div><div data-day="2">Tue</div><div data-day="3">Wed</div><div data-day="4">Thu</div><div data-day="5">Fri</div>
@@ -346,21 +448,48 @@ footer{
       </div>
     </div>
 
+    <div class="tt-agenda" id="ttAgenda"></div>
+
     <div class="legend-row">
       <span><span class="swatch" style="background:var(--blue);"></span>COS 284</span>
       <span><span class="swatch" style="background:var(--red);"></span>COS 330</span>
       <span><span class="swatch" style="background:var(--yellow);"></span>Test / assessment slot</span>
     </div>
-    <div class="note" id="ttNote">
+    <div class="note">
       Use the filters above to isolate your practical group. COS 284's Friday 09:30–12:30 block is the
       standing class-test window — a test only happens on the three announced dates (7 Aug, 11 Sep, 30 Oct).
+      COS 330 writes a single semester test (28 Aug, Chapters 1–5) and has no lecture on public holidays
+      (10 Aug) or during September recess (17–27 Sep).
     </div>
   </div>
 
   <!-- ============ CALENDAR VIEW ============ -->
   <div class="view" id="view-cal">
-    <div class="month-labels"><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov / Dec</div></div>
-    <div class="timeline" id="timeline"></div>
+
+    <div class="prog-section">
+      <div class="prog-readout">
+        <span class="big" id="progBig"></span>
+        <span class="sub" id="progSub"></span>
+      </div>
+      <div class="prog-months" id="progMonths"></div>
+      <div class="prog-track" id="progTrack"></div>
+    </div>
+
+    <div class="cal-nav">
+      <div class="month-title" id="monthTitle"></div>
+      <div class="btns">
+        <button class="navbtn" id="prevBtn" aria-label="Previous month">←</button>
+        <button class="todaybtn" id="todayBtn">Today</button>
+        <button class="navbtn" id="nextBtn" aria-label="Next month">→</button>
+      </div>
+    </div>
+
+    <div class="cal-grid">
+      <div class="cal-dow">
+        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+      </div>
+      <div class="cal-weeks" id="calWeeks"></div>
+    </div>
 
     <div class="legend2">
       <span><span class="swatch" style="background:var(--cream);"></span>Lectures</span>
@@ -369,7 +498,9 @@ footer{
       <span><span class="swatch" style="background:#b9b2a4;"></span>Study period</span>
       <span><span class="swatch" style="background:var(--blue);"></span>Exam period</span>
       <span><span class="swatch" style="background:#6b5b4a;"></span>Supplementary exams</span>
-      <span><span class="swatch" style="background:var(--red);border-radius:50%;"></span>Assessment date</span>
+      <span><span class="swatch" style="background:repeating-linear-gradient(45deg, var(--card), var(--card) 3px, var(--line) 3px, var(--line) 6px);"></span>No lectures/exams (gap)</span>
+      <span><span class="swatch" style="background:var(--blue);border-radius:50%;"></span>COS 284 date</span>
+      <span><span class="swatch" style="background:var(--red);border-radius:50%;"></span>COS 330 date</span>
     </div>
 
     <div class="detail-panel" id="detailPanel">
@@ -378,8 +509,12 @@ footer{
       <div class="cd" id="dpCountdown"></div>
     </div>
 
+    <div class="summary-head">
+      <span class="st">Summary — every key date</span>
+      <span class="sc">tap a row to locate it on the calendar</span>
+    </div>
     <table class="datatable">
-      <tr><th>Date</th><th>Module</th><th>Assessment</th><th>Time</th><th>Venue</th><th>Countdown</th></tr>
+      <thead><tr><th>Date</th><th>Module</th><th>Assessment</th><th>Time</th><th>Venue</th><th>Countdown</th></tr></thead>
       <tbody id="eventRows"></tbody>
     </table>
 
@@ -391,19 +526,17 @@ footer{
 
   <footer>
     <span>NAS / EBIT · UNIVERSITY OF PRETORIA</span>
-    <span id="footRight">CONFIRM ALL DATES ON CLICKUP</span>
+    <span>CONFIRM ALL DATES ON CLICKUP</span>
   </footer>
 </div>
 
 <script src="data.js"></script>
 <script>
-/* ---------------- DERIVED CONSTANTS ---------------- */
-const totalMs = SEM_END - SEM_START;
+/* TT / EVENTS / SEGMENTS / SEM_START / SEM_END / CAL_MIN / CAL_MAX /
+   DAY_NAMES / PROG_START / PROG_END now all live in data.js — edit
+   that file each semester instead of this one. */
 
-function pct(dateStr){
-  const d = new Date(dateStr+'T12:00:00');
-  return Math.max(0, Math.min(100, ((d - SEM_START) / totalMs) * 100));
-}
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fmtDate(dateStr){
   const d = new Date(dateStr+'T12:00:00');
   return d.toLocaleDateString('en-ZA', {weekday:'short', day:'numeric', month:'short'});
@@ -417,6 +550,15 @@ function daysLeftLabel(dateStr){
   if(diff > 1) return 'in ' + diff + ' days';
   return Math.abs(diff) + ' days ago';
 }
+function segmentTypeFor(dateStr){
+  const d = new Date(dateStr+'T12:00:00');
+  if(d < SEM_START || d > SEM_END) return null;
+  for(const s of SEGMENTS){
+    if(dateStr >= s.start && dateStr <= s.end) return s.type;
+  }
+  return 'lectures';
+}
+function eventsOn(dateStr){ return EVENTS.filter(e=>e.date===dateStr); }
 
 /* ---------------- THEME TOGGLE ---------------- */
 const themeToggle = document.getElementById('themeToggle');
@@ -431,62 +573,120 @@ themeToggle.addEventListener('click', ()=>{
   localStorage.setItem('sched_theme', next);
 });
 
-/* ---------------- TIMETABLE RENDER ---------------- */
-const HOURS = ['07:30','08:30','09:30','10:30','11:30','12:30','13:30','14:30','15:30','16:30','17:30'];
-const HOUR_PX = 60; // px per hour — matches .tt-time { height:60px } in CSS
-const timeCol = document.getElementById('timeCol');
-HOURS.forEach(h=>{
-  const d = document.createElement('div');
-  d.className='tt-time'; d.textContent=h;
-  timeCol.appendChild(d);
-});
-
+/* ================= TIMETABLE : grid render (responsive hour height) ================= */
+const START_MIN = 450;    // 07:30
+const END_MIN = 1050;     // 17:30
 function toMinutes(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
-const dayHeight = HOUR_PX * 10; // 10 hour blocks
+function fmtMin(min){ const h=Math.floor(min/60), m=min%60; return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'); }
 
-for(let day=1; day<=5; day++){
-  const col = document.getElementById('col-'+day);
-  // hour guides
-  for(let i=1;i<=10;i++){
-    const g = document.createElement('div');
-    g.className='hr-guide'; g.style.top = (i*HOUR_PX)+'px';
-    col.appendChild(g);
-  }
-  col.style.height = dayHeight+'px';
-  TT.filter(b=>b.day===day).forEach(b=>{
-    const top = (toMinutes(b.start)-450)/60*HOUR_PX;
-    const height = (toMinutes(b.end)-toMinutes(b.start))/60*HOUR_PX;
-    const el = document.createElement('div');
-    const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
-    el.className = 'block '+cls;
-    el.style.top = top+'px';
-    el.style.height = height+'px';
-    el.dataset.mod = b.mod;
-    el.dataset.group = b.group;
-    const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
-    el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="venue">${b.venue}</span>`;
-    col.appendChild(el);
-  });
+function getHourPx(){
+  const shortLandscape = window.matchMedia('(orientation: landscape) and (max-height: 520px)').matches;
+  const bigScreen = window.matchMedia('(min-width: 1600px)').matches;
+  if(shortLandscape) return 44;
+  if(bigScreen) return 38;
+  return 34;
 }
 
-/* now-line (also auto-scrolls the page to "now" once on first load) */
+const timeCol = document.getElementById('timeCol');
+
+function renderTimetableGrid(){
+  const HOUR_PX = getHourPx();
+  const dayHeight = (END_MIN-START_MIN)/60*HOUR_PX;
+  const minToTop = min => (min-START_MIN)/60*HOUR_PX;
+
+  timeCol.innerHTML = '';
+  timeCol.style.height = dayHeight+'px';
+  for(let min=START_MIN; min<=END_MIN; min+=10){
+    const mm = min%60;
+    if(mm===20 || mm===30){
+      const lbl = document.createElement('div');
+      lbl.className = 'tt-time major';
+      lbl.style.top = minToTop(min)+'px';
+      lbl.textContent = fmtMin(min);
+      timeCol.appendChild(lbl);
+    }
+  }
+
+  for(let day=1; day<=5; day++){
+    const col = document.getElementById('col-'+day);
+    col.innerHTML = '';
+    col.style.height = dayHeight+'px';
+    for(let min=START_MIN; min<=END_MIN; min+=10){
+      const mm = min%60;
+      if(mm===20 || mm===30){
+        const g = document.createElement('div');
+        g.className = 'hr-guide major';
+        g.style.top = minToTop(min)+'px';
+        col.appendChild(g);
+      }
+    }
+    TT.filter(b=>b.day===day).forEach(b=>{
+      const top = minToTop(toMinutes(b.start));
+      const height = minToTop(toMinutes(b.end)) - top;
+      const el = document.createElement('div');
+      const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
+      el.className = 'block '+cls;
+      el.style.top = top+'px';
+      el.style.height = height+'px';
+      el.dataset.mod = b.mod;
+      el.dataset.group = b.group;
+      const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
+      el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="venue">${b.venue}</span><span class="times">${b.start}–${b.end}</span>`;
+      col.appendChild(el);
+    });
+  }
+  applyFilters();
+  renderNowLine();
+}
+
+/* ================= TIMETABLE : agenda render (phones) — built once ================= */
+const ttAgenda = document.getElementById('ttAgenda');
+for(let day=1; day<=5; day++){
+  const card = document.createElement('div');
+  card.className = 'day-card';
+  card.dataset.day = day;
+  const items = TT.filter(b=>b.day===day);
+  card.innerHTML = `<div class="day-title">${DAY_NAMES[day]}</div><div class="items"></div>`;
+  const itemsWrap = card.querySelector('.items');
+  if(items.length===0){
+    const p = document.createElement('div'); p.className='no-items'; p.textContent='Nothing scheduled.';
+    card.appendChild(p);
+  }
+  items.forEach(b=>{
+    const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
+    const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
+    const el = document.createElement('div');
+    el.className = 'agenda-item '+cls;
+    el.dataset.mod = b.mod;
+    el.dataset.group = b.group;
+    el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="meta">${b.start}–${b.end} · ${b.venue}</span>`;
+    itemsWrap.appendChild(el);
+  });
+  ttAgenda.appendChild(card);
+}
+
+/* now indicators (grid + agenda) */
 let didAutoScroll = false;
 function renderNowLine(){
   document.querySelectorAll('.nowline').forEach(n=>n.remove());
   document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('today'));
   document.querySelectorAll('.tt-head-row div').forEach(c=>c.classList.remove('today-col'));
+  document.querySelectorAll('.day-card').forEach(c=>c.classList.remove('today'));
 
   const now = new Date();
-  const wd = now.getDay(); // 0 Sun .. 6 Sat
+  const wd = now.getDay();
   if(wd>=1 && wd<=5){
     const col = document.getElementById('col-'+wd);
     const headCell = document.querySelector(`.tt-head-row div[data-day="${wd}"]`);
-    if(col){ col.classList.add('today'); }
-    if(headCell){ headCell.classList.add('today-col'); }
+    const dayCard = document.querySelector(`.day-card[data-day="${wd}"]`);
+    if(col) col.classList.add('today');
+    if(headCell) headCell.classList.add('today-col');
+    if(dayCard) dayCard.classList.add('today');
 
     const mins = now.getHours()*60+now.getMinutes();
-    if(mins>=450 && mins<=1050){
-      const top = (mins-450)/60*HOUR_PX;
+    if(mins>=START_MIN && mins<=END_MIN && col){
+      const HOUR_PX = getHourPx();
+      const top = (mins-START_MIN)/60*HOUR_PX;
       const line = document.createElement('div');
       line.className='nowline';
       line.style.top = top+'px';
@@ -495,82 +695,17 @@ function renderNowLine(){
 
       if(!didAutoScroll){
         didAutoScroll = true;
-        setTimeout(()=> line.scrollIntoView({block:'center', behavior:'smooth'}), 150);
+        setTimeout(()=>{
+          // grid may be hidden (mobile uses the agenda cards instead) — scroll whichever is actually visible
+          const target = line.offsetParent !== null ? line : document.querySelector('.day-card.today');
+          if(target) target.scrollIntoView({block:'center', behavior:'smooth'});
+        }, 150);
       }
     }
   }
 }
-renderNowLine();
-setInterval(renderNowLine, 60000);
 
-/* ---------------- NEXT CLASS / ASSESSMENT BANNER ---------------- */
-function fmtCountdown(ms){
-  if(ms<0) ms=0;
-  const totalMin = Math.round(ms/60000);
-  const days = Math.floor(totalMin/1440);
-  const hrs = Math.floor((totalMin%1440)/60);
-  const mins = totalMin%60;
-  if(days>0) return days+'d '+hrs+'h';
-  if(hrs>0) return hrs+'h '+mins+'m';
-  return mins+'m';
-}
-
-function getNextUp(){
-  const now = new Date();
-  const candidates = [];
-
-  TT.forEach(b=>{
-    if(b.mod==='test') return; // generic placeholder window, not a real weekly event
-    if(!modActive[b.mod]) return;
-    if(b.group && groupSel[b.mod]!=='all' && groupSel[b.mod]!==b.group) return;
-
-    const nowDay = now.getDay();
-    let diffDays = (b.day - nowDay + 7) % 7;
-    const [sh,sm] = b.start.split(':').map(Number);
-    const dt = new Date(now);
-    dt.setHours(sh, sm, 0, 0);
-    dt.setDate(dt.getDate() + diffDays);
-    if(dt <= now) dt.setDate(dt.getDate()+7);
-
-    candidates.push({
-      when: dt,
-      label: (b.mod==='284' ? 'COS 284' : 'COS 330') + ' ' + b.kind,
-      venue: b.venue,
-      kindLabel: '▸ Next class'
-    });
-  });
-
-  EVENTS.forEach(ev=>{
-    const m = (ev.time || '').match(/\d{2}:\d{2}/);
-    const hhmm = m ? m[0] : '00:00';
-    const dt = new Date(ev.date+'T'+hhmm+':00');
-    if(dt > now){
-      candidates.push({
-        when: dt,
-        label: (ev.mod==='284' ? 'COS 284' : 'COS 330') + ' — ' + ev.label,
-        venue: ev.venue,
-        kindLabel: '📌 Next assessment'
-      });
-    }
-  });
-
-  candidates.sort((a,b)=>a.when-b.when);
-  return candidates[0] || null;
-}
-
-function renderNextBanner(){
-  const el = document.getElementById('nextBanner');
-  if(!el) return;
-  const next = getNextUp();
-  if(!next){
-    el.innerHTML = 'No upcoming classes match the current filters.';
-    return;
-  }
-  const diff = next.when - new Date();
-  el.innerHTML = `${next.kindLabel}: <strong>${next.label}</strong> — ${next.venue}<span class="banner-cd">in ${fmtCountdown(diff)}</span>`;
-}
-
-/* ---------------- FILTERS (persisted across visits) ---------------- */
+/* filters — restored from localStorage so choices survive a refresh */
 let modActive = JSON.parse(localStorage.getItem('sched_modActive') || 'null') || {284:true, 330:true};
 let groupSel  = JSON.parse(localStorage.getItem('sched_groupSel')  || 'null') || {284:'all', 330:'all'};
 
@@ -580,7 +715,7 @@ function saveFilterState(){
 }
 
 function applyFilters(){
-  document.querySelectorAll('.block').forEach(el=>{
+  document.querySelectorAll('.block, .agenda-item').forEach(el=>{
     const m = el.dataset.mod;
     const g = el.dataset.group;
     let show = true;
@@ -593,10 +728,9 @@ function applyFilters(){
   renderNextBanner();
 }
 
-// restore saved chip / segmented-button state into the UI before first render
+// sync the chip / segmented-button UI to the restored filter state before first render
 document.querySelectorAll('.chip[data-mod]').forEach(chip=>{
-  const m = chip.dataset.mod;
-  chip.classList.toggle('on', !!modActive[m]);
+  chip.classList.toggle('on', !!modActive[chip.dataset.mod]);
 });
 document.querySelectorAll('.seg').forEach(seg=>{
   const mod = seg.dataset.segfor;
@@ -614,7 +748,6 @@ document.querySelectorAll('.chip[data-mod]').forEach(chip=>{
     applyFilters();
   });
 });
-
 document.querySelectorAll('.seg').forEach(seg=>{
   const mod = seg.dataset.segfor;
   seg.querySelectorAll('button').forEach(btn=>{
@@ -628,113 +761,307 @@ document.querySelectorAll('.seg').forEach(seg=>{
   });
 });
 
-applyFilters();
+/* ---------------- NEXT CLASS / ASSESSMENT BANNER ---------------- */
+function fmtCountdown(ms){
+  if(ms<0) ms=0;
+  const totalMin = Math.round(ms/60000);
+  const days = Math.floor(totalMin/1440);
+  const hrs = Math.floor((totalMin%1440)/60);
+  const mins = totalMin%60;
+  if(days>0) return days+'d '+hrs+'h';
+  if(hrs>0) return hrs+'h '+mins+'m';
+  return mins+'m';
+}
+function getNextUp(){
+  const now = new Date();
+  const candidates = [];
+  TT.forEach(b=>{
+    if(b.mod==='test') return; // placeholder window, not a real weekly event
+    if(!modActive[b.mod]) return;
+    if(b.group && groupSel[b.mod]!=='all' && groupSel[b.mod]!==b.group) return;
+    const nowDay = now.getDay();
+    let diffDays = (b.day - nowDay + 7) % 7;
+    const [sh,sm] = b.start.split(':').map(Number);
+    const dt = new Date(now);
+    dt.setHours(sh, sm, 0, 0);
+    dt.setDate(dt.getDate() + diffDays);
+    if(dt <= now) dt.setDate(dt.getDate()+7);
+    candidates.push({ when: dt, label: (b.mod==='284'?'COS 284':'COS 330')+' '+b.kind, venue: b.venue, kindLabel:'▸ Next class' });
+  });
+  EVENTS.forEach(ev=>{
+    const m = (ev.time || '').match(/\d{2}:\d{2}/);
+    const dt = new Date(ev.date+'T'+(m?m[0]:'00:00')+':00');
+    if(dt > now){
+      candidates.push({ when: dt, label: (ev.mod==='284'?'COS 284':'COS 330')+' — '+ev.label, venue: ev.venue, kindLabel:'📌 Next assessment' });
+    }
+  });
+  candidates.sort((a,b)=>a.when-b.when);
+  return candidates[0] || null;
+}
+function renderNextBanner(){
+  const el = document.getElementById('nextBanner');
+  if(!el) return;
+  const next = getNextUp();
+  if(!next){ el.innerHTML = 'No upcoming classes match the current filters.'; return; }
+  const diff = next.when - new Date();
+  el.innerHTML = `${next.kindLabel}: <strong>${next.label}</strong> — ${next.venue}<span class="banner-cd">in ${fmtCountdown(diff)}</span>`;
+}
 setInterval(renderNextBanner, 60000);
 
-/* ---------------- MOBILE SINGLE-DAY VIEW ---------------- */
-const daySwitcher = document.getElementById('daySwitcher');
-const ttBodyEl = document.getElementById('ttBody');
-const ttHeadRowEl = document.getElementById('ttHeadRow');
+renderTimetableGrid();
+setInterval(renderNowLine, 60000);
 
-function setMobileDay(day){
-  daySwitcher.querySelectorAll('button').forEach(b=>b.classList.toggle('active', +b.dataset.day===day));
-  document.querySelectorAll('.day-col').forEach(c=>c.classList.toggle('mobile-show', +c.dataset.day===day));
-  document.querySelectorAll('.tt-head-row div[data-day]').forEach(c=>c.classList.toggle('mobile-show', +c.dataset.day===day));
-}
-
-function applyMobileMode(){
-  const isMobile = window.matchMedia('(max-width:720px)').matches;
-  ttBodyEl.classList.toggle('mobile-mode', isMobile);
-  ttHeadRowEl.classList.toggle('mobile-mode', isMobile);
-}
-applyMobileMode();
-window.addEventListener('resize', applyMobileMode);
-
-daySwitcher.querySelectorAll('button').forEach(btn=>{
-  btn.addEventListener('click', ()=> setMobileDay(+btn.dataset.day));
+/* re-render grid on resize / orientation change (debounced) */
+let resizeTimer = null;
+let lastHourPx = getHourPx();
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{
+    const hp = getHourPx();
+    if(hp !== lastHourPx){
+      lastHourPx = hp;
+      renderTimetableGrid();
+    }
+  }, 150);
 });
 
-(function initMobileDay(){
-  const todayDay = new Date().getDay();
-  setMobileDay(todayDay>=1 && todayDay<=5 ? todayDay : 1);
-})();
+/* ================= CALENDAR : progress-bar strip ================= */
+const PROG_TOTAL_MS = PROG_END - PROG_START;
+const PROG_TOTAL_DAYS = Math.round(PROG_TOTAL_MS/86400000);
 
-/* ---------------- CALENDAR RENDER ---------------- */
-const timeline = document.getElementById('timeline');
-SEGMENTS.forEach(s=>{
-  const left = pct(s.start);
-  const right = pct(s.end);
-  const width = Math.max(right-left, 0.3);
-  const el = document.createElement('div');
-  el.className = 'seg-block '+s.type;
-  el.style.left = left+'%';
-  el.style.width = width+'%';
-  el.title = s.type.toUpperCase()+': '+fmtDate(s.start)+' – '+fmtDate(s.end);
-  timeline.appendChild(el);
-});
+const PROG_SEGMENTS = SEGMENTS
+  .map(s=>({...s}))
+  .filter(s => new Date(s.start+'T12:00:00') <= PROG_END)
+  .map(s=>{
+    if(new Date(s.end+'T12:00:00') > PROG_END) return {...s, end:'2026-11-22'};
+    return s;
+  });
 
-// now marker on timeline
-const nowForTimeline = new Date();
-if(nowForTimeline >= SEM_START && nowForTimeline <= SEM_END){
-  const nowPct = ((nowForTimeline-SEM_START)/totalMs)*100;
-  const nm = document.createElement('div');
-  nm.className='now-marker';
-  nm.style.left = nowPct+'%';
-  nm.innerHTML = `<span class="tag">TODAY · ${nowForTimeline.toLocaleDateString('en-ZA',{day:'numeric',month:'short'})}</span>`;
-  timeline.appendChild(nm);
+function progPct(dateStr){
+  const d = new Date(dateStr+'T12:00:00');
+  return Math.max(0, Math.min(100, ((d-PROG_START)/PROG_TOTAL_MS)*100));
 }
 
-// pins + table rows
+function renderProgressBar(){
+  const track = document.getElementById('progTrack');
+  const monthsRow = document.getElementById('progMonths');
+  track.innerHTML=''; monthsRow.innerHTML='';
+
+  PROG_SEGMENTS.forEach(s=>{
+    const left = progPct(s.start);
+    const right = progPct(s.end);
+    const el = document.createElement('div');
+    el.className = 'prog-seg '+s.type;
+    el.style.left = left+'%';
+    el.style.width = Math.max(right-left,0.4)+'%';
+    el.title = s.type.toUpperCase()+': '+fmtDate(s.start)+' – '+fmtDate(s.end);
+    track.appendChild(el);
+  });
+
+  const monthBounds = [
+    {name:'Jul', start:'2026-07-20', end:'2026-07-31'},
+    {name:'Aug', start:'2026-08-01', end:'2026-08-31'},
+    {name:'Sep', start:'2026-09-01', end:'2026-09-30'},
+    {name:'Oct', start:'2026-10-01', end:'2026-10-31'},
+    {name:'Nov', start:'2026-11-01', end:'2026-11-22'},
+  ];
+  monthBounds.forEach(mb=>{
+    const left = progPct(mb.start);
+    const right = progPct(mb.end);
+    const div = document.createElement('div');
+    div.style.flex = Math.max(right-left,1);
+    div.textContent = mb.name;
+    monthsRow.appendChild(div);
+  });
+
+  const now = new Date();
+  const progBig = document.getElementById('progBig');
+  const progSub = document.getElementById('progSub');
+
+  if(now < PROG_START){
+    const daysTo = Math.ceil((PROG_START-now)/86400000);
+    progBig.textContent = 'Semester starts in ' + daysTo + ' days';
+    progSub.textContent = fmtDate('2026-07-20') + ' → ' + fmtDate('2026-11-22');
+  } else if(now > PROG_END){
+    progBig.textContent = "You're done — semester complete";
+    progSub.textContent = fmtDate('2026-07-20') + ' → ' + fmtDate('2026-11-22');
+  } else {
+    const elapsed = Math.floor((now-PROG_START)/86400000);
+    const remaining = PROG_TOTAL_DAYS - elapsed;
+    const pct = Math.round((elapsed/PROG_TOTAL_DAYS)*100);
+    progBig.textContent = pct + '% through the semester';
+    progSub.textContent = 'Day ' + elapsed + ' of ' + PROG_TOTAL_DAYS + ' · ' + remaining + ' days to go · ' + fmtDate('2026-07-20') + ' → ' + fmtDate('2026-11-22');
+
+    const fill = document.createElement('div');
+    fill.className='prog-fill';
+    fill.style.width = pct+'%';
+    track.appendChild(fill);
+
+    const marker = document.createElement('div');
+    marker.className='prog-now';
+    marker.style.left = pct+'%';
+    marker.innerHTML = `<div class="dot"></div><div class="lab">Today</div>`;
+    track.appendChild(marker);
+  }
+}
+renderProgressBar();
+
+/* ================= CALENDAR : month view ================= */
+let viewY, viewM;
+{
+  const now = new Date();
+  if(now.getFullYear()===2026 && now.getMonth()>=CAL_MIN.m && now.getMonth()<=CAL_MAX.m){
+    viewY = now.getFullYear(); viewM = now.getMonth();
+  } else if(now < new Date(2026,CAL_MIN.m,1)){
+    viewY = CAL_MIN.y; viewM = CAL_MIN.m;
+  } else {
+    viewY = CAL_MAX.y; viewM = CAL_MAX.m;
+  }
+}
+
+const monthTitle = document.getElementById('monthTitle');
+const calWeeks = document.getElementById('calWeeks');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const todayBtn = document.getElementById('todayBtn');
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function renderCalendar(){
+  monthTitle.textContent = MONTH_NAMES[viewM] + ' ' + viewY;
+  prevBtn.disabled = (viewY===CAL_MIN.y && viewM===CAL_MIN.m);
+  nextBtn.disabled = (viewY===CAL_MAX.y && viewM===CAL_MAX.m);
+
+  calWeeks.innerHTML = '';
+  const first = new Date(viewY, viewM, 1);
+  let startOffset = first.getDay() - 1;
+  if(startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(viewY, viewM+1, 0).getDate();
+  const totalCells = Math.ceil((startOffset+daysInMonth)/7)*7;
+
+  const now = new Date();
+  const todayStr = ymd(now);
+
+  for(let i=0;i<totalCells;i++){
+    const dayNum = i - startOffset + 1;
+    const cell = document.createElement('div');
+    let cellDate, inMonth = true;
+    if(dayNum < 1){ cellDate = new Date(viewY, viewM, dayNum); inMonth = false; }
+    else if(dayNum > daysInMonth){ cellDate = new Date(viewY, viewM, dayNum); inMonth = false; }
+    else { cellDate = new Date(viewY, viewM, dayNum); }
+    const dStr = ymd(cellDate);
+    cell.className = 'cal-cell';
+    if(!inMonth) cell.classList.add('outside');
+    const segType = segmentTypeFor(dStr);
+    if(segType) cell.classList.add(segType);
+    if(dStr === todayStr) cell.classList.add('today');
+
+    const num = document.createElement('div');
+    num.className='num'; num.textContent = cellDate.getDate();
+    cell.appendChild(num);
+
+    const evs = eventsOn(dStr);
+    if(evs.length){
+      const dotsWrap = document.createElement('div'); dotsWrap.className='dots';
+      evs.forEach(e=>{
+        const dot = document.createElement('span');
+        dot.className = 'dot ' + (e.mod==='284'?'c284':'c330');
+        dotsWrap.appendChild(dot);
+      });
+      cell.appendChild(dotsWrap);
+    }
+    if(inMonth){ cell.addEventListener('click', ()=>selectDay(dStr, cell)); }
+    calWeeks.appendChild(cell);
+  }
+}
+
+function selectDay(dStr, cellEl){
+  document.querySelectorAll('.cal-cell.selected').forEach(c=>c.classList.remove('selected'));
+  if(cellEl) cellEl.classList.add('selected');
+  document.querySelectorAll('tr.ev.selected').forEach(r=>r.classList.remove('selected'));
+
+  const evs = eventsOn(dStr);
+  if(evs.length){
+    const lines = evs.map(e=> (e.mod==='284'?'COS 284':'COS 330') + ' — ' + e.label + ' · ' + e.time + ' · ' + e.venue).join('<br>');
+    dpTitle.textContent = fmtDate(dStr);
+    dpDesc.innerHTML = lines;
+    dpCountdown.textContent = daysLeftLabel(dStr);
+    detailPanel.classList.add('show');
+    evs.forEach(e=>{
+      const row = eventRowMap[e.date+e.mod];
+      if(row) row.classList.add('selected');
+    });
+  } else {
+    const segType = segmentTypeFor(dStr);
+    const labelMap = {lectures:'Lecture day', test:'Test Week', recess:'September Recess', study:'Pre-exam study period', exam:'Exam period', supp:'Supplementary exam period', gap:'No lectures or exams — cooling-off period'};
+    dpTitle.textContent = fmtDate(dStr);
+    dpDesc.textContent = segType ? (labelMap[segType] || segType) : 'Outside the semester date range.';
+    dpCountdown.textContent = daysLeftLabel(dStr);
+    detailPanel.classList.add('show');
+  }
+}
+
+prevBtn.addEventListener('click', ()=>{ viewM--; if(viewM<0){viewM=11; viewY--;} renderCalendar(); });
+nextBtn.addEventListener('click', ()=>{ viewM++; if(viewM>11){viewM=0; viewY++;} renderCalendar(); });
+todayBtn.addEventListener('click', ()=>{
+  const now = new Date();
+  if(now.getFullYear()===2026 && now.getMonth()>=CAL_MIN.m && now.getMonth()<=CAL_MAX.m){
+    viewY = now.getFullYear(); viewM = now.getMonth();
+  } else { viewY = CAL_MIN.y; viewM = CAL_MIN.m; }
+  renderCalendar();
+  const todayCell = document.querySelector('.cal-cell.today');
+  if(todayCell) selectDay(ymd(now), todayCell);
+});
+
+/* ---------------- SUMMARY TABLE ---------------- */
 const eventRows = document.getElementById('eventRows');
 const detailPanel = document.getElementById('detailPanel');
 const dpTitle = document.getElementById('dpTitle');
 const dpDesc = document.getElementById('dpDesc');
 const dpCountdown = document.getElementById('dpCountdown');
+const eventRowMap = {};
 
-function selectEvent(ev, pinEl, rowEl){
-  document.querySelectorAll('.pin').forEach(p=>p.classList.remove('selected'));
-  document.querySelectorAll('tr.ev').forEach(r=>r.classList.remove('selected'));
-  if(pinEl) pinEl.classList.add('selected');
-  if(rowEl) rowEl.classList.add('selected');
-
-  const modLabel = ev.mod==='284' ? 'COS 284' : 'COS 330';
-  dpTitle.textContent = modLabel+' — '+ev.label;
-  dpDesc.textContent = fmtDate(ev.date)+' · '+ev.time+' · '+ev.venue;
-  dpCountdown.textContent = daysLeftLabel(ev.date);
-  detailPanel.classList.add('show');
-}
-
-const eventRefs = [];
-EVENTS.forEach((ev, i)=>{
-  const left = pct(ev.date);
-
-  const pin = document.createElement('div');
-  pin.className='pin';
-  pin.style.left = left+'%';
-  pin.innerHTML = `<div class="lab">${fmtDate(ev.date).split(',')[1].trim()}</div><div class="stem"></div><div class="dot"></div>`;
-  pin.style.top = (i%2===0 ? '-36px' : '-52px');
-  timeline.appendChild(pin);
-
+EVENTS.forEach(ev=>{
   const row = document.createElement('tr');
   row.className='ev';
-  row.innerHTML = `<td>${fmtDate(ev.date)}</td>
-    <td><span class="tag2 ${ev.mod==='284'?'c284':'c330'}">${ev.mod==='284'?'COS 284':'COS 330'}</span></td>
-    <td>${ev.label}</td><td>${ev.time}</td><td>${ev.venue}</td>
-    <td class="days-left">${daysLeftLabel(ev.date)}</td>`;
+  row.innerHTML = `<td data-label="Date">${fmtDate(ev.date)}</td>
+    <td data-label="Module"><span class="tag2 ${ev.mod==='284'?'c284':'c330'}">${ev.mod==='284'?'COS 284':'COS 330'}</span></td>
+    <td data-label="Assessment">${ev.label}</td>
+    <td data-label="Time">${ev.time}</td>
+    <td data-label="Venue">${ev.venue}</td>
+    <td data-label="Countdown" class="days-left">${daysLeftLabel(ev.date)}</td>`;
+  row.addEventListener('click', ()=>{
+    const d = new Date(ev.date+'T12:00:00');
+    viewY = d.getFullYear(); viewM = d.getMonth();
+    renderCalendar();
+    const cell = [...document.querySelectorAll('.cal-cell:not(.outside)')].find(c => c.querySelector('.num').textContent == d.getDate());
+    selectDay(ev.date, cell);
+    document.getElementById('view-cal').scrollIntoView({behavior:'smooth', block:'start'});
+  });
   eventRows.appendChild(row);
-
-  pin.addEventListener('click', ()=>selectEvent(ev, pin, row));
-  row.addEventListener('click', ()=>selectEvent(ev, pin, row));
-
-  eventRefs.push({ev, pin, row});
+  eventRowMap[ev.date+ev.mod] = row;
 });
 
-// auto-select the next upcoming assessment so the detail panel isn't empty on load
-(function autoSelectNextEvent(){
+renderCalendar();
+
+/* auto-select today (or the nearest upcoming event if today's outside the semester range)
+   so the detail panel isn't empty until the user clicks something */
+(function autoSelectOnLoad(){
   const now = new Date();
-  let next = eventRefs.find(r => new Date(r.ev.date+'T23:59:59') >= now);
-  if(!next && eventRefs.length) next = eventRefs[eventRefs.length-1];
-  if(next) selectEvent(next.ev, next.pin, next.row);
+  const todayStr = ymd(now);
+  const todayCell = document.querySelector('.cal-cell.today');
+  if(todayCell){
+    selectDay(todayStr, todayCell);
+    return;
+  }
+  let next = EVENTS.find(e => e.date >= todayStr);
+  if(!next) next = EVENTS[EVENTS.length-1];
+  if(next){
+    const d = new Date(next.date+'T12:00:00');
+    viewY = d.getFullYear(); viewM = d.getMonth();
+    renderCalendar();
+    const cell = [...document.querySelectorAll('.cal-cell:not(.outside)')].find(c => c.querySelector('.num').textContent == d.getDate());
+    selectDay(next.date, cell);
+  }
 })();
 
 /* ---------------- TABS ---------------- */
@@ -747,9 +1074,7 @@ tabBtns.forEach(btn=>{
     btn.classList.add('active');
     Object.values(views).forEach(v=>v.classList.remove('active'));
     views[btn.dataset.tab].classList.add('active');
-    const showTTChrome = btn.dataset.tab==='tt';
-    ttFilterbar.style.display = showTTChrome ? 'flex' : 'none';
-    daySwitcher.style.display = showTTChrome ? '' : 'none';
+    ttFilterbar.style.display = btn.dataset.tab==='tt' ? 'flex' : 'none';
   });
 });
 </script>
