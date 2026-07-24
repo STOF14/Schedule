@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Live weekly timetable and semester calendar for COS 284 & COS 330, University of Pretoria, S2 2026.">
+<meta name="description" content="Live weekly timetable and semester calendar for COS 284, COS 330 & WTW 224, University of Pretoria, S2 2026.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23261d11'/%3E%3Ctext x='50' y='70' font-size='58' font-family='Arial,sans-serif' font-weight='900' fill='%23f2b705' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <title>S2 2026 — Schedule</title>
 <style>
@@ -131,6 +131,7 @@ header{
 }
 .chip.on.c284{background:var(--blue); color:var(--cream);}
 .chip.on.c330{background:var(--red); color:var(--cream);}
+.chip.on.c224{background:var(--green); color:var(--cream);}
 .chip:not(.on){opacity:0.4;}
 .seg{display:flex; border:2px solid var(--ink); border-radius:14px; overflow:hidden;}
 .seg button{
@@ -194,6 +195,7 @@ header{
 .block .times{font-family:'JetBrains Mono',monospace; font-size:0.62rem; margin-top:3px; display:block; opacity:0.85;}
 .b284{background:var(--blue); color:var(--cream);}
 .b330{background:var(--red); color:var(--cream);}
+.b224{background:var(--green); color:var(--cream);}
 .btest{background:var(--yellow); color:var(--ink);}
 .block.dim{opacity:0.12; pointer-events:none;}
 
@@ -306,6 +308,7 @@ header{
 .cal-cell .dot{width:8px; height:8px; border-radius:50%; border:1.5px solid var(--ink);}
 .cal-cell .dot.c284{background:var(--blue);}
 .cal-cell .dot.c330{background:var(--red);}
+.cal-cell .dot.c224{background:var(--green);}
 .cal-cell.today .num{
   background:var(--red); color:var(--cream); border-radius:50%; width:20px; height:20px;
   display:flex; align-items:center; justify-content:center;
@@ -343,6 +346,7 @@ header{
 .tag2{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:8px; color:var(--cream);}
 .tag2.c284{background:var(--blue);}
 .tag2.c330{background:var(--red);}
+.tag2.c224{background:var(--green);}
 .days-left{font-family:'JetBrains Mono',monospace; font-size:0.62rem; opacity:0.65; white-space:nowrap;}
 
 .quote-block{margin-top:26px; border-left:3px solid var(--ink); padding-left:13px; font-size:0.72rem; line-height:1.6; max-width:580px; font-style:italic;}
@@ -397,7 +401,7 @@ footer{
     <button class="theme-toggle" id="themeToggle" title="Toggle dark / light theme">&#9789;</button>
     <div class="eyebrow">University of Pretoria · Hatfield · S2 2026</div>
     <div class="wordmark"><span class="a">SCHED</span><span class="b">ULE</span></div>
-    <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 (Computer Security &amp; Ethics) — live timetable &amp; semester calendar</div>
+    <div class="subhead">COS 284 (Computer Organisation &amp; Architecture) · COS 330 (Computer Security &amp; Ethics) · WTW 224 (Techniques of Analysis) — live timetable &amp; semester calendar</div>
 
     <div><span class="next-banner" id="nextBanner">Loading next class…</span></div>
 
@@ -413,6 +417,7 @@ footer{
       <span class="lbl">Module</span>
       <span class="chip on c284" data-mod="284">COS 284</span>
       <span class="chip on c330" data-mod="330">COS 330</span>
+      <span class="chip on c224" data-mod="224">WTW 224</span>
     </div>
     <div class="filter-group">
       <span class="lbl">284 Practical</span>
@@ -453,6 +458,7 @@ footer{
     <div class="legend-row">
       <span><span class="swatch" style="background:var(--blue);"></span>COS 284</span>
       <span><span class="swatch" style="background:var(--red);"></span>COS 330</span>
+      <span><span class="swatch" style="background:var(--green);"></span>WTW 224</span>
       <span><span class="swatch" style="background:var(--yellow);"></span>Test / assessment slot</span>
     </div>
     <div class="note">
@@ -501,6 +507,7 @@ footer{
       <span><span class="swatch" style="background:repeating-linear-gradient(45deg, var(--card), var(--card) 3px, var(--line) 3px, var(--line) 6px);"></span>No lectures/exams (gap)</span>
       <span><span class="swatch" style="background:var(--blue);border-radius:50%;"></span>COS 284 date</span>
       <span><span class="swatch" style="background:var(--red);border-radius:50%;"></span>COS 330 date</span>
+      <span><span class="swatch" style="background:var(--green);border-radius:50%;"></span>WTW 224 date</span>
     </div>
 
     <div class="detail-panel" id="detailPanel">
@@ -535,6 +542,11 @@ footer{
 /* TT / EVENTS / SEGMENTS / SEM_START / SEM_END / CAL_MIN / CAL_MAX /
    DAY_NAMES / PROG_START / PROG_END now all live in data.js — edit
    that file each semester instead of this one. */
+
+const MOD_LABELS = {284:'COS 284', 330:'COS 330', 224:'WTW 224'};
+function modLabel(m){ return MOD_LABELS[m] || 'Assessment'; }
+function modColorClass(m){ return MOD_LABELS[m] ? ('c'+m) : 'ctest'; }
+function modBlockClass(m){ return MOD_LABELS[m] ? ('b'+m) : 'btest'; }
 
 function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fmtDate(dateStr){
@@ -624,14 +636,14 @@ function renderTimetableGrid(){
       const top = minToTop(toMinutes(b.start));
       const height = minToTop(toMinutes(b.end)) - top;
       const el = document.createElement('div');
-      const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
+      const cls = modBlockClass(b.mod);
       el.className = 'block '+cls;
       el.style.top = top+'px';
       el.style.height = height+'px';
       el.dataset.mod = b.mod;
       el.dataset.group = b.group;
-      const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
-      el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="venue">${b.venue}</span><span class="times">${b.start}–${b.end}</span>`;
+      const modLbl = modLabel(b.mod);
+      el.innerHTML = `<span class="mod">${modLbl}</span><span class="kind">${b.kind}</span><span class="venue">${b.venue}</span><span class="times">${b.start}–${b.end}</span>`;
       col.appendChild(el);
     });
   }
@@ -653,13 +665,13 @@ for(let day=1; day<=5; day++){
     card.appendChild(p);
   }
   items.forEach(b=>{
-    const cls = b.mod==='284' ? 'b284' : (b.mod==='330' ? 'b330' : 'btest');
-    const modLabel = b.mod==='284' ? 'COS 284' : (b.mod==='330' ? 'COS 330' : 'Assessment');
+    const cls = modBlockClass(b.mod);
+    const modLbl = modLabel(b.mod);
     const el = document.createElement('div');
     el.className = 'agenda-item '+cls;
     el.dataset.mod = b.mod;
     el.dataset.group = b.group;
-    el.innerHTML = `<span class="mod">${modLabel}</span><span class="kind">${b.kind}</span><span class="meta">${b.start}–${b.end} · ${b.venue}</span>`;
+    el.innerHTML = `<span class="mod">${modLbl}</span><span class="kind">${b.kind}</span><span class="meta">${b.start}–${b.end} · ${b.venue}</span>`;
     itemsWrap.appendChild(el);
   });
   ttAgenda.appendChild(card);
@@ -706,7 +718,8 @@ function renderNowLine(){
 }
 
 /* filters — restored from localStorage so choices survive a refresh */
-let modActive = JSON.parse(localStorage.getItem('sched_modActive') || 'null') || {284:true, 330:true};
+let modActive = JSON.parse(localStorage.getItem('sched_modActive') || 'null') || {284:true, 330:true, 224:true};
+if(modActive[224]===undefined) modActive[224] = true; // back-compat: old saved state predates the WTW224 chip
 let groupSel  = JSON.parse(localStorage.getItem('sched_groupSel')  || 'null') || {284:'all', 330:'all'};
 
 function saveFilterState(){
@@ -719,7 +732,7 @@ function applyFilters(){
     const m = el.dataset.mod;
     const g = el.dataset.group;
     let show = true;
-    if(m==='284' || m==='330'){
+    if(m==='284' || m==='330' || m==='224'){
       if(!modActive[m]) show = false;
       if(g && groupSel[m] !== 'all' && groupSel[m] !== g) show = false;
     }
@@ -786,13 +799,13 @@ function getNextUp(){
     dt.setHours(sh, sm, 0, 0);
     dt.setDate(dt.getDate() + diffDays);
     if(dt <= now) dt.setDate(dt.getDate()+7);
-    candidates.push({ when: dt, label: (b.mod==='284'?'COS 284':'COS 330')+' '+b.kind, venue: b.venue, kindLabel:'▸ Next class' });
+    candidates.push({ when: dt, label: modLabel(b.mod)+' '+b.kind, venue: b.venue, kindLabel:'▸ Next class' });
   });
   EVENTS.forEach(ev=>{
     const m = (ev.time || '').match(/\d{2}:\d{2}/);
     const dt = new Date(ev.date+'T'+(m?m[0]:'00:00')+':00');
     if(dt > now){
-      candidates.push({ when: dt, label: (ev.mod==='284'?'COS 284':'COS 330')+' — '+ev.label, venue: ev.venue, kindLabel:'📌 Next assessment' });
+      candidates.push({ when: dt, label: modLabel(ev.mod)+' — '+ev.label, venue: ev.venue, kindLabel:'📌 Next assessment' });
     }
   });
   candidates.sort((a,b)=>a.when-b.when);
@@ -964,7 +977,7 @@ function renderCalendar(){
       const dotsWrap = document.createElement('div'); dotsWrap.className='dots';
       evs.forEach(e=>{
         const dot = document.createElement('span');
-        dot.className = 'dot ' + (e.mod==='284'?'c284':'c330');
+        dot.className = 'dot ' + modColorClass(e.mod);
         dotsWrap.appendChild(dot);
       });
       cell.appendChild(dotsWrap);
@@ -981,7 +994,7 @@ function selectDay(dStr, cellEl){
 
   const evs = eventsOn(dStr);
   if(evs.length){
-    const lines = evs.map(e=> (e.mod==='284'?'COS 284':'COS 330') + ' — ' + e.label + ' · ' + e.time + ' · ' + e.venue).join('<br>');
+    const lines = evs.map(e=> modLabel(e.mod) + ' — ' + e.label + ' · ' + e.time + ' · ' + e.venue).join('<br>');
     dpTitle.textContent = fmtDate(dStr);
     dpDesc.innerHTML = lines;
     dpCountdown.textContent = daysLeftLabel(dStr);
@@ -1024,7 +1037,7 @@ EVENTS.forEach(ev=>{
   const row = document.createElement('tr');
   row.className='ev';
   row.innerHTML = `<td data-label="Date">${fmtDate(ev.date)}</td>
-    <td data-label="Module"><span class="tag2 ${ev.mod==='284'?'c284':'c330'}">${ev.mod==='284'?'COS 284':'COS 330'}</span></td>
+    <td data-label="Module"><span class="tag2 ${modColorClass(ev.mod)}">${modLabel(ev.mod)}</span></td>
     <td data-label="Assessment">${ev.label}</td>
     <td data-label="Time">${ev.time}</td>
     <td data-label="Venue">${ev.venue}</td>

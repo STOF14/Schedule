@@ -16,13 +16,18 @@ const DAY_NAMES = {1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Frid
 const TT = [
   {day:1, mod:'330', group:'',   kind:'Lecture 1', venue:'IT 2-27', start:'08:30', end:'09:20'},
   {day:1, mod:'284', group:'P01', kind:'Practical · Groups A–D', venue:'Info Brown / Grey / Maroon / Purple', start:'14:30', end:'17:20'},
+  {day:1, mod:'224', group:'',   kind:'Lecture 1', venue:'Mathematics 2-1', start:'11:30', end:'12:20'},
 
   {day:2, mod:'284', group:'',   kind:'Theory Lecture 1', venue:'Centenary 1', start:'10:30', end:'11:20'},
   {day:2, mod:'284', group:'P02', kind:'Practical · Groups A–B', venue:'Info Blue Lab 2 / 3', start:'14:30', end:'17:20'},
+  {day:2, mod:'224', group:'',   kind:'Tutorial 1', venue:'Mathematics 2-1', start:'13:00', end:'14:20'},
+
+  {day:5, mod:'284', group:'', kind:'Theory Lecture (L4)', venue:'IT 2-23', start:'09:30', end:'10:20'},
 
   {day:3, mod:'330', group:'P01', kind:'Practical', venue:'Info SIT 1 Lab', start:'07:30', end:'10:20'},
   {day:3, mod:'284', group:'',   kind:'Theory Lecture 2', venue:'IT 2-23', start:'09:30', end:'10:20'},
   {day:3, mod:'330', group:'P02', kind:'Practical', venue:'Info Blue Lab 1 & 2', start:'13:30', end:'16:20'},
+  {day:3, mod:'224', group:'',   kind:'Lecture 2', venue:'Mathematics 2-1', start:'16:30', end:'17:20'},
 
   {day:4, mod:'284', group:'',   kind:'Assembly Lecture', venue:'IT 2-23', start:'07:30', end:'08:20'},
   {day:4, mod:'330', group:'',   kind:'Lecture 2', venue:'IT 4-4', start:'11:30', end:'12:20'},
@@ -33,10 +38,13 @@ const TT = [
 const EVENTS = [
   {date:'2026-08-07', mod:'284', label:'Class Test 1 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
   {date:'2026-08-22', mod:'284', label:'Semester Test 1', time:'10:00–11:30', venue:'Informatorium Labs'},
+  {date:'2026-08-24', mod:'224', label:'Test 1', time:'10:00–11:30', venue:'IT 4-2'},
   {date:'2026-08-28', mod:'330', label:'Semester Test (Ch. 1–5)', time:'10:00–11:30', venue:'Informatorium Blue1/2/3, Red'},
   {date:'2026-09-11', mod:'284', label:'Class Test 2 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
+  {date:'2026-10-10', mod:'224', label:'Test 2', time:'10:00–11:30', venue:'IT 4-2'},
   {date:'2026-10-12', mod:'284', label:'Semester Test 2', time:'10:00–11:30', venue:'Informatorium Labs'},
   {date:'2026-10-30', mod:'284', label:'Class Test 3 (theory)', time:'09:30–12:30 window', venue:'Online / ClickUP'},
+  {date:'2026-11-09', mod:'224', label:'Final Exam (Prelim)', time:'07:30', venue:'Hatfield'},
   {date:'2026-11-11', mod:'284', label:'Final Exam', time:'08:00', venue:'Informatorium'},
   {date:'2026-11-21', mod:'330', label:'Final Exam', time:'15:00–18:00', venue:'Blackboard/ClickUP, Informatorium'},
 ];
